@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import "./pages.css";
+import { CartContext } from "../context/CartContext";
 
 const OrderConfirmation = () => {
   const [searchParams] = useSearchParams();
@@ -9,6 +10,7 @@ const OrderConfirmation = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { clearCart } = useContext(CartContext);
 
   const orderId = searchParams.get("orderId");
 
@@ -31,6 +33,15 @@ const OrderConfirmation = () => {
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const { data } = await api.get(`/orders/${orderId}`, config);
         setOrder(data);
+
+        // Clear cart when payment is confirmed for Pesapal orders
+        if (data && data.paymentMethod === 'Pesapal' && data.status === 'Processing') {
+          try {
+            clearCart();
+          } catch (e) {
+            console.warn('Could not clear cart after payment:', e.message || e);
+          }
+        }
       } catch (err) {
         console.error("Error fetching order:", err);
         setError(err.response?.data?.message || "Failed to load order details");
@@ -40,7 +51,7 @@ const OrderConfirmation = () => {
     };
 
     fetchOrder();
-  }, [orderId]);
+  }, [orderId, clearCart]);
 
   if (loading) return <div className="page-container"><p>Loading order details...</p></div>;
 
@@ -96,3 +107,4 @@ const OrderConfirmation = () => {
 };
 
 export default OrderConfirmation;
+
