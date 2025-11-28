@@ -54,7 +54,7 @@ const CartPage = () => {
             <img src={product.image || product.images?.[0]?.url || ''} alt={product?.name || 'Product'} />
             <div className="item-info">
               <h4>{product.name}</h4>
-              <p>${(Number(product?.price) || 0).toFixed(2)}</p>
+              <p>KES{(Number(product?.price) || 0).toFixed(2)}</p>
               <div className="qty-control">
                 <input
                   type="number"
