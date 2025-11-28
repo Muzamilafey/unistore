@@ -84,28 +84,31 @@ function App() {
         <Router>
           <Navbar />
           <main className="app-content">
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/wishlist" element={<WishlistPage />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/collections" element={<CollectionsPage />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/category/:category" element={<CategoryProducts />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/returns" element={<Returns />} />
-            <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/activate-account" element={<ActivateAccount />} />
-            <Route path="/admin/discounts" element={<DiscountsAdmin />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/activate-account/:token" element={<ActivateAccount />} />
+
+            {/* private routes */}
+            <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+            <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
+            <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
+
+            {/* Admin routes */}
+            <Route path="/admin/dashboard" element={<PrivateRoute roles={["admin"]}><AdminDashboard /></PrivateRoute>} />
+            <Route path="/admin/products" element={<PrivateRoute roles={["admin"]}><AdminProducts /></PrivateRoute>} />
+            <Route path="/admin/add-product" element={<PrivateRoute roles={["admin"]}><AddProduct /></PrivateRoute>} />
+            <Route path="/admin/orders" element={<PrivateRoute roles={["admin"]}><AdminOrders /></PrivateRoute>} />
+            <Route path="/admin/orders/:orderId" element={<PrivateRoute roles={["admin"]}><OrderDetails /></PrivateRoute>} />
+            <Route path="/admin/customers" element={<PrivateRoute roles={["admin"]}><AdminCustomers /></PrivateRoute>} />
+            <Route path="/admin/returns" element={<PrivateRoute roles={["admin"]}><AdminReturns /></PrivateRoute>} />
+            <Route path="/admin/deals" element={<PrivateRoute roles={["admin"]}><AdminDeals /></PrivateRoute>} />
+            <Route path="/admin/discounts" element={<PrivateRoute roles={["admin"]}><DiscountsAdmin /></PrivateRoute>} />
+            <Route path="/admin/discount-carousel" element={<PrivateRoute roles={["admin"]}><DiscountCarouselAdmin /></PrivateRoute>} />
+            <Route path="/admin/support" element={<PrivateRoute roles={["admin"]}><SupportMessages /></PrivateRoute>} />
 
             {/* Footer routes */}
-            <Route path="/Contact" element={<HelpCenter />} />
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/faqs" element={<FAQs />} />
-            <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/terms" element={<Terms />} />
@@ -114,133 +117,6 @@ function App() {
             <Route path="/manwell-pay" element={<ManwellPay />} />
             <Route path="/manwell-food" element={<ManwellFood />} />
             <Route path="/manwell-travel" element={<ManwellTravel />} />
-            {/*  */}
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/admin/support" element={<SupportMessages />} />
-
-           
-            {/* other routes */}
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-          
-            
-
-
-            {/* Protected routes */}
-            <Route
-              path="/admin/orders/:orderId"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <OrderDetails />
-                </PrivateRoute>
-              }
-            />
-
-            <Route
-              path="/profile"
-              element={
-                <PrivateRoute>
-                  <ProfilePage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/checkout"
-              element={
-                <PrivateRoute>
-                  <CheckoutPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/orders"
-              element={
-                <PrivateRoute>
-                  <OrdersPage />
-                </PrivateRoute>
-              }
-            />
-
-            {/* Admin routes */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AdminDashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/discount-carousel"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <DiscountCarouselAdmin />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/products"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AdminProducts />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/add-product"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AddProduct />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/product/addproduct"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AddProduct />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/orders"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AdminOrders />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/customers"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AdminCustomers />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/returns"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AdminReturns />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/deals"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <AdminDeals />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/activate-account"
-              element={
-                <PrivateRoute roles={["admin"]}>
-                  <ActivateAccount />
-                </PrivateRoute>
-              }
-            />
 
             {/* 404 fallback */}
             <Route path="*" element={<h2>404 - Not Found</h2>} />

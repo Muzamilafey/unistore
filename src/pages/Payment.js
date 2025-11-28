@@ -100,7 +100,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         setMessage("📲 Sending M-PESA STK push...");
 
         const stkResponse = await fetch(
-          "https://unistorefront.onrender.com/api/mpesa/stkpush",
+          `${process.env.REACT_APP_API_URL}/mpesa/stkpush`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -172,6 +172,17 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
             onChange={(e) => setPaymentMethod(e.target.value)}
           />
           <span className="option-label">Pay on Delivery</span>
+        </label>
+        <label className="option">
+          <div className="option-icon">{getPaymentIcon("Mpesa")}</div>
+          <input
+            type="radio"
+            name="paymentMethod"
+            value="Mpesa"
+            checked={paymentMethod === "Mpesa"}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          <span className="option-label">Mpesa</span>
         </label>
         <label className="option">
           <div className="option-icon">{getPaymentIcon("Pesapal")}</div>
