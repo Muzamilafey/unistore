@@ -41,7 +41,7 @@ const FAQs = () => {
     <div className="faq-page-container">
       <div className="faq-header">
         <h1>Frequently Asked Questions</h1>
-        <p>Everything you need to know about shopping with <span className="brand">Manwell Store</span>.</p>
+        <p>Everything you need to know about shopping with <span className="brand">Unistore Store</span>.</p>
       </div>
 
       <div className="faq-list">

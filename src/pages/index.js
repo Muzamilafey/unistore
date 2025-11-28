@@ -25,10 +25,10 @@ const HomePage = () => {
       <TrustBadges />
       <Helmet>
         {/* Home Page Meta Tags */}
-        <title>Manwell Store | Trendy Fashion Clothing in Eastleigh, Nairobi</title>
+        <title>Unistore Store | Trendy Fashion Clothing in Eastleigh, Nairobi</title>
         <meta
           name="description"
-          content="Shop premium quality fashion for men & women at Manwell Store. Affordable, stylish, and latest trends in Eastleigh. Visit us or shop online now!"
+          content="Shop premium quality fashion for men & women at Unistore Store. Affordable, stylish, and latest trends in Eastleigh. Visit us or shop online now!"
         />
         <meta name="keywords" content="
           online fashion store kenya,
@@ -61,22 +61,22 @@ const HomePage = () => {
           top online fashion shop kenya,
           quality clothes kenya,
           fashion deals kenya,
-          manwell store,
-          manwell clothing kenya
+          Unistore store,
+          Unistore clothing kenya
       " />
-        <meta name="author" content="Manwell Store" />
+        <meta name="author" content="Unistore Store" />
 
         {/* Open Graph */}
-        <meta property="og:title" content="Manwell Store | Trendy Fashion Clothing in Eastleigh, Nairobi" />
-        <meta property="og:description" content="Shop premium quality fashion for men & women at Manwell Store. Affordable, stylish, and latest trends in Eastleigh. Visit us or shop online now!" />
+        <meta property="og:title" content="Unistore Store | Trendy Fashion Clothing in Eastleigh, Nairobi" />
+        <meta property="og:description" content="Shop premium quality fashion for men & women at Unistore Store. Affordable, stylish, and latest trends in Eastleigh. Visit us or shop online now!" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://github.com/Muzamilafey/myassets/blob/main/Mandera%20-%201.png?raw=true" />
         <meta property="og:url" content="https://manwellstore.com" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Manwell Store | Trendy Fashion Clothing in Eastleigh, Nairobi" />
-        <meta name="twitter:description" content="Shop premium quality fashion for men & women at Manwell Store. Affordable, stylish, and latest trends in Eastleigh. Visit us or shop online now!" />
+        <meta name="twitter:title" content="Unistore Store | Trendy Fashion Clothing in Eastleigh, Nairobi" />
+        <meta name="twitter:description" content="Shop premium quality fashion for men & women at Unistore Store. Affordable, stylish, and latest trends in Eastleigh. Visit us or shop online now!" />
         <meta name="twitter:image" content="https://github.com/Muzamilafey/myassets/blob/main/Mandera%20-%201.png?raw=true" />
       </Helmet>
     </div>

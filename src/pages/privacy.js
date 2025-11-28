@@ -6,7 +6,7 @@ const Privacy = () => {
   return (
     <div className="page-container">
       <h1>Privacy Policy</h1>
-  <p>Your privacy is important to us. This Privacy Policy explains how MANWELL collects, uses, and protects your personal information.</p>
+  <p>Your privacy is important to us. This Privacy Policy explains how Unistore collects, uses, and protects your personal information.</p>
 
       <h2>1. Information We Collect</h2>
       <ul>

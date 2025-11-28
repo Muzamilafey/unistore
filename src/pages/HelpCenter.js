@@ -6,7 +6,7 @@ const HelpCenter = () => {
   return (
     <div className="page-container">
       <h1>Help Center</h1>
-  <p>Welcome to the MANWELL Help Center. Here you can find resources to assist you with your shopping experience.</p>
+  <p>Welcome to the Unistore Help Center. Here you can find resources to assist you with your shopping experience.</p>
       <ul>
         <li>Track your orders</li>
         <li>Manage your account</li>

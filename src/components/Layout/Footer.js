@@ -21,7 +21,7 @@ const Footer = () => {
 
         {/* About */}
         <div className="footer-section">
-          <h4>About MANWELL</h4>
+          <h4>About Unistore</h4>
           <ul>
             <li><a href="/About-us">About Us</a></li>
             <li><a href="/careers">Careers</a></li>
@@ -45,9 +45,9 @@ const Footer = () => {
           <h4>Business Details</h4>
           <ul>
             <li><FaStore /> Fashion Store</li>
-            <li><FaMapMarkerAlt /> 6th Street Tower (Eastleigh), Nairobi</li>
-            <li><FaPhoneAlt /> +254 794 701 113</li>
-            <li><FaEnvelope /> manwellstore@gmail.com</li>
+            <li><FaMapMarkerAlt /> Mihango (Utawala), Nairobi</li>
+            <li><FaPhoneAlt /> +254722651888</li>
+            <li><FaEnvelope /> admin@muzamilafey.digital</li>
           </ul>
         </div>
       </div>
