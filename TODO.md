@@ -1,0 +1,3 @@
+- [x] Update src/components/product/ProductList.css to set grid-template-columns: repeat(5, 1fr) for desktop (5 items per row)
+- [x] Ensure mobile remains 2 items per row (already set)
+- [x] Verify the homepage layout is vertical: latest product in hero, product list below
