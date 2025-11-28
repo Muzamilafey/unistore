@@ -91,6 +91,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/activate-account/:token" element={<ActivateAccount />} />
 
               {/* Product & collection routes */}
@@ -123,6 +124,7 @@ function App() {
 
               {/* Footer routes */}
               <Route path="/shipping" element={<Shipping />} />
+              <Route path="/returns" element={<Returns />} />
               <Route path="/faqs" element={<FAQs />} />
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/careers" element={<Careers />} />
