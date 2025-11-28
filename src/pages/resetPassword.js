@@ -31,7 +31,7 @@ const ResetPassword = () => {
 
     try {
       const res = await fetch(
-        "https://manwellback.onrender.com/api/auth/forgot-password",
+        "https://unistorefront.onrender.com/api/auth/forgot-password",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -59,7 +59,7 @@ const ResetPassword = () => {
 
     try {
       const res = await fetch(
-        `https://manwellback.onrender.com/api/auth/reset-password/${token}`,
+        `https://unistorefront.onrender.com/api/auth/reset-password/${token}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -84,7 +84,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         setMessage("📲 Sending M-PESA STK push...");
 
         const stkResponse = await fetch(
-          "https://manwellback.onrender.com/api/mpesa/stkpush",
+          "https://unistorefront.onrender.com/api/mpesa/stkpush",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

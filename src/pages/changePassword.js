@@ -16,7 +16,7 @@ const ChangePassword = () => {
     setMessage("");
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("https://manwellback.onrender.com/api/account/change-password", {
+      const res = await fetch("https://unistorefront.onrender.com/api/account/change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

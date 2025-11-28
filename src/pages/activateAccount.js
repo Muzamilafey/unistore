@@ -23,7 +23,7 @@ const ActivateAccount = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("https://manwellback.onrender.com/api/account/send-activation", {
+      const res = await fetch("https://unistorefront.onrender.com/api/account/send-activation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -47,7 +47,7 @@ const ActivateAccount = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("https://manwellback.onrender.com/api/account/activate-by-token", {
+      const res = await fetch("https://unistorefront.onrender.com/api/account/activate-by-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),

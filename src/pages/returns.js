@@ -30,7 +30,7 @@ const ReturnsPage = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("https://manwellback.onrender.com/api/returns", {
+      const res = await fetch("https://unistorefront.onrender.com/api/returns", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -66,7 +66,7 @@ const ReturnsPage = () => {
     setStatusResult(null);
     try {
       const res = await fetch(
-        `https://manwellback.onrender.com/api/returns/status?email=${encodeURIComponent(statusEmail)}&orderId=${encodeURIComponent(statusOrderId)}`
+        `https://unistorefront.onrender.com/api/returns/status?email=${encodeURIComponent(statusEmail)}&orderId=${encodeURIComponent(statusOrderId)}`
       );
       if (res.ok) {
         const found = await res.json();
