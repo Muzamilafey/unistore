@@ -20,6 +20,8 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         return "🚚";
       case "Card":
         return "💳";
+      case "Pesapal":
+        return "🅿️";
       default:
         return "💰";
     }
@@ -47,8 +49,8 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       return;
     }
 
-    if (paymentMethod === "Mpesa" && !validatePhone(phone)) {
-      setMessage("⚠️ Please enter a valid M-PESA number (07XXXXXXXX or 01XXXXXXXX)");
+    if ((paymentMethod === "Mpesa" || paymentMethod === "Pesapal") && !validatePhone(phone)) {
+      setMessage("⚠️ Please enter a valid phone number (07XXXXXXXX or 01XXXXXXXX)");
       return;
     }
 
@@ -67,7 +69,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         discount: discount,
         couponCode: couponCode,
         finalAmount,
-        phone: paymentMethod === "Mpesa" ? phone : undefined,
+        phone: (paymentMethod === "Mpesa" || paymentMethod === "Pesapal") ? phone : undefined,
       };
 
       const token = localStorage.getItem("token");
@@ -78,9 +80,23 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       }
 
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const response = await api.post("/orders", orderPayload, config);
+      const { data: order } = await api.post("/orders", orderPayload, config);
 
-      if (paymentMethod === "Mpesa") {
+      if (paymentMethod === "Pesapal") {
+        setMessage(" Redirecting to Pesapal for payment...");
+        const pesapalPayload = {
+          amount: finalAmount,
+          email: shippingAddress.email,
+          phone: phone,
+          orderId: order._id,
+        };
+        const { data: pesapalResponse } = await api.post('/pesapal/initiate-payment', pesapalPayload, config);
+        if (pesapalResponse.redirect_url) {
+          window.location.href = pesapalResponse.redirect_url;
+        } else {
+          setMessage("❌ Failed to initiate Pesapal payment.");
+        }
+      } else if (paymentMethod === "Mpesa") {
         setMessage("📲 Sending M-PESA STK push...");
 
         const stkResponse = await fetch(
@@ -157,11 +173,22 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
           />
           <span className="option-label">Pay on Delivery</span>
         </label>
+        <label className="option">
+          <div className="option-icon">{getPaymentIcon("Pesapal")}</div>
+          <input
+            type="radio"
+            name="paymentMethod"
+            value="Pesapal"
+            checked={paymentMethod === "Pesapal"}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          <span className="option-label">Pesapal</span>
+        </label>
       </div>
 
-      {paymentMethod === "Mpesa" && (
-        <div className="mpesa-input-box" style={{ display: "none" }}>
-          <label>Enter M-PESA Number</label>
+      {(paymentMethod === "Mpesa" || paymentMethod === "Pesapal") && (
+        <div className="mpesa-input-box">
+          <label>Enter Phone Number</label>
           <input
             type="tel"
             placeholder="07XXXXXXXX"
