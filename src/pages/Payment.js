@@ -7,7 +7,6 @@ import "./Payment.css";
 const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponCode = null }) => {
   const { cartItems, clearCart } = useContext(CartContext);
   const [paymentMethod, setPaymentMethod] = useState("Pay on Delivery");
-  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -38,17 +37,9 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
 
   const finalAmount = totalPrice - discountAmount;
 
-  // Validate Kenyan phone number
-  const validatePhone = (num) => /^(07|01)\d{8}$/.test(num);
-
   const handlePayment = async () => {
     if (!cartItems.length) {
       setMessage("⚠️ No items in cart");
-      return;
-    }
-
-    if (paymentMethod === "Pesapal" && !validatePhone(phone)) {
-      setMessage("⚠️ Please enter a valid phone number (07XXXXXXXX or 01XXXXXXXX)");
       return;
     }
 
@@ -67,7 +58,6 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         discount: discount,
         couponCode: couponCode,
         finalAmount,
-        phone: paymentMethod === "Pesapal" ? phone : undefined,
       };
 
       const token = localStorage.getItem("token");
@@ -85,7 +75,6 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         const pesapalPayload = {
           amount: finalAmount,
           email: shippingAddress.email,
-          phone: phone,
           orderId: order._id,
         };
         const { data: pesapalResponse } = await api.post('/pesapal/initiate-payment', pesapalPayload, config);
@@ -161,18 +150,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         </label>
       </div>
 
-      {paymentMethod === "Pesapal" && (
-        <div className="mpesa-input-box">
-          <label>Enter Phone Number</label>
-          <input
-            type="tel"
-            placeholder="07XXXXXXXX"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            maxLength={10}
-          />
-        </div>
-      )}
+      {/* No phone input required for Pesapal - amount is auto-filled on Pesapal site */}
 
       <button className="pay-btn" onClick={handlePayment} disabled={loading}>
         {loading

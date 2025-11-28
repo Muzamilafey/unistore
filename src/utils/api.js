@@ -39,12 +39,12 @@ api.getDashboardData = async () => {
 };
 
 // Pesapal payment
-api.pesapalPayment = async ({ amount, description, email, phone }) => {
+api.pesapalPayment = async ({ amount, description, email, orderId }) => {
   const paymentRes = await api.post('/pesapal/initiate-payment', {
     amount,
     description,
     email,
-    phone,
+    orderId,
   });
   return paymentRes.data;
 };
