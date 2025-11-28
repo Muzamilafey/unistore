@@ -117,6 +117,8 @@ function App() {
               <Route path="/admin/dashboard" element={<PrivateRoute roles={["admin"]}><AdminDashboard /></PrivateRoute>} />
               <Route path="/admin/products" element={<PrivateRoute roles={["admin"]}><AdminProducts /></PrivateRoute>} />
               <Route path="/admin/add-product" element={<PrivateRoute roles={["admin"]}><AddProduct /></PrivateRoute>} />
+              {/* legacy/alternate route used in some links */}
+              <Route path="/admin/product/addproduct" element={<PrivateRoute roles={["admin"]}><AddProduct /></PrivateRoute>} />
               <Route path="/admin/orders" element={<PrivateRoute roles={["admin"]}><AdminOrders /></PrivateRoute>} />
               <Route path="/admin/orders/:orderId" element={<PrivateRoute roles={["admin"]}><OrderDetails /></PrivateRoute>} />
               <Route path="/admin/customers" element={<PrivateRoute roles={["admin"]}><AdminCustomers /></PrivateRoute>} />
