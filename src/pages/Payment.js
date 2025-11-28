@@ -68,25 +68,25 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       }
 
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const { data: order } = await api.post("/orders", orderPayload, config);
+      const { data: orderRes } = await api.post("/orders", orderPayload, config);
+      // backend returns { message, order }
+      const order = orderRes?.order || orderRes;
 
       if (paymentMethod === "Pesapal") {
-        setMessage(" Redirecting to Pesapal for payment...");
-        const pesapalPayload = {
-          amount: finalAmount,
-          email: shippingAddress.email,
-          orderId: order._id,
-        };
-        const { data: pesapalResponse } = await api.post('/pesapal/initiate-payment', pesapalPayload, config);
-        if (pesapalResponse.redirect_url) {
-          // Redirect to Pesapal checkout — do not clear cart yet
-          window.location.href = pesapalResponse.redirect_url;
-          return; // stop further execution
-        } else {
-          setMessage("❌ Failed to initiate Pesapal payment.");
-          // order may have been deleted by backend; do not clear cart
-          return;
-        }
+        setMessage(" Redirecting to Pesapal store for payment...");
+        // Build Pesapal store URL with amount pre-filled and merchant reference
+        const storeBase = 'https://store.pesapal.com/muzafey';
+        const merchantRef = order._id || order?.order?._id || order?.id;
+        const params = new URLSearchParams({
+          amount: String(finalAmount),
+          currency: 'KES',
+          merchant_reference: merchantRef,
+          email: shippingAddress.email || ''
+        });
+        const redirectTo = `${storeBase}?${params.toString()}`;
+        // Redirect user to Pesapal store — do not clear cart yet. Backend callback should finalize the order.
+        window.location.href = redirectTo;
+        return;
       } else {
         setMessage("✅ Order placed successfully (Pay on Delivery).");
         clearCart();
