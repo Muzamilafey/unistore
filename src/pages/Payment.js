@@ -90,16 +90,19 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         };
         const { data: pesapalResponse } = await api.post('/pesapal/initiate-payment', pesapalPayload, config);
         if (pesapalResponse.redirect_url) {
+          // Redirect to Pesapal checkout — do not clear cart yet
           window.location.href = pesapalResponse.redirect_url;
+          return; // stop further execution
         } else {
           setMessage("❌ Failed to initiate Pesapal payment.");
+          // order may have been deleted by backend; do not clear cart
+          return;
         }
       } else {
         setMessage("✅ Order placed successfully (Pay on Delivery).");
+        clearCart();
+        setTimeout(() => navigate("/"), 2500);
       }
-
-      clearCart();
-      setTimeout(() => navigate("/"), 2500);
     } catch (err) {
       console.error("Payment error:", err);
       setMessage(`❌ ${err.response?.data?.message || "Payment failed. Try again."}`);
