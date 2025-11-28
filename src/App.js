@@ -110,16 +110,16 @@ function App() {
 
               {/* Admin routes */}
               <Route path="/admin/dashboard" element={<PrivateRoute roles={["admin"]}><AdminDashboard /></PrivateRoute>} />
-              <Route path="/admin/products" element={<PrivateRoute roles={["admin"]"><AdminProducts /></PrivateRoute>} />
-              <Route path="/admin/add-product" element={<PrivateRoute roles={["admin"]"><AddProduct /></PrivateRoute>} />
-              <Route path="/admin/orders" element={<PrivateRoute roles={["admin"]"><AdminOrders /></PrivateRoute>} />
-              <Route path="/admin/orders/:orderId" element={<PrivateRoute roles={["admin"]"><OrderDetails /></PrivateRoute>} />
-              <Route path="/admin/customers" element={<PrivateRoute roles={["admin"]"><AdminCustomers /></PrivateRoute>} />
-              <Route path="/admin/returns" element={<PrivateRoute roles={["admin"]"><AdminReturns /></PrivateRoute>} />
-              <Route path="/admin/deals" element={<PrivateRoute roles={["admin"]"><AdminDeals /></PrivateRoute>} />
-              <Route path="/admin/discounts" element={<PrivateRoute roles={["admin"]"><DiscountsAdmin /></PrivateRoute>} />
-              <Route path="/admin/discount-carousel" element={<PrivateRoute roles={["admin"]"><DiscountCarouselAdmin /></PrivateRoute>} />
-              <Route path="/admin/support" element={<PrivateRoute roles={["admin"]"><SupportMessages /></PrivateRoute>} />
+              <Route path="/admin/products" element={<PrivateRoute roles={["admin"]}><AdminProducts /></PrivateRoute>} />
+              <Route path="/admin/add-product" element={<PrivateRoute roles={["admin"]}><AddProduct /></PrivateRoute>} />
+              <Route path="/admin/orders" element={<PrivateRoute roles={["admin"]}><AdminOrders /></PrivateRoute>} />
+              <Route path="/admin/orders/:orderId" element={<PrivateRoute roles={["admin"]}><OrderDetails /></PrivateRoute>} />
+              <Route path="/admin/customers" element={<PrivateRoute roles={["admin"]}><AdminCustomers /></PrivateRoute>} />
+              <Route path="/admin/returns" element={<PrivateRoute roles={["admin"]}><AdminReturns /></PrivateRoute>} />
+              <Route path="/admin/deals" element={<PrivateRoute roles={["admin"]}><AdminDeals /></PrivateRoute>} />
+              <Route path="/admin/discounts" element={<PrivateRoute roles={["admin"]}><DiscountsAdmin /></PrivateRoute>} />
+              <Route path="/admin/discount-carousel" element={<PrivateRoute roles={["admin"]}><DiscountCarouselAdmin /></PrivateRoute>} />
+              <Route path="/admin/support" element={<PrivateRoute roles={["admin"]}><SupportMessages /></PrivateRoute>} />
 
               {/* Footer routes */}
               <Route path="/shipping" element={<Shipping />} />
