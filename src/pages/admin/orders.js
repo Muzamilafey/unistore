@@ -165,6 +165,21 @@ const AdminOrders = () => {
                     <Link to={`/admin/orders/${o._id}`}>
                       <button className="admin-btn-primary">View</button>
                     </Link>
+                    {/* Delete Button */}
+                    <button
+                      className="admin-btn-danger"
+                      onClick={async () => {
+                        if (!confirm('Delete this order? This action cannot be undone.')) return;
+                        try {
+                          await api.delete(`/orders/${o._id}`);
+                          fetchOrders();
+                        } catch (err) {
+                          alert('Failed to delete order');
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
