@@ -84,43 +84,58 @@ function App() {
         <Router>
           <Navbar />
           <main className="app-content">
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/activate-account/:token" element={<ActivateAccount />} />
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/activate-account/:token" element={<ActivateAccount />} />
 
-            {/* private routes */}
-            <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
-            <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
-            <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
+              {/* Product & collection routes */}
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/category/:category" element={<CategoryProducts />} />
+              <Route path="/collections" element={<CollectionsPage />} />
 
-            {/* Admin routes */}
-            <Route path="/admin/dashboard" element={<PrivateRoute roles={["admin"]}><AdminDashboard /></PrivateRoute>} />
-            <Route path="/admin/products" element={<PrivateRoute roles={["admin"]}><AdminProducts /></PrivateRoute>} />
-            <Route path="/admin/add-product" element={<PrivateRoute roles={["admin"]}><AddProduct /></PrivateRoute>} />
-            <Route path="/admin/orders" element={<PrivateRoute roles={["admin"]}><AdminOrders /></PrivateRoute>} />
-            <Route path="/admin/orders/:orderId" element={<PrivateRoute roles={["admin"]}><OrderDetails /></PrivateRoute>} />
-            <Route path="/admin/customers" element={<PrivateRoute roles={["admin"]}><AdminCustomers /></PrivateRoute>} />
-            <Route path="/admin/returns" element={<PrivateRoute roles={["admin"]}><AdminReturns /></PrivateRoute>} />
-            <Route path="/admin/deals" element={<PrivateRoute roles={["admin"]}><AdminDeals /></PrivateRoute>} />
-            <Route path="/admin/discounts" element={<PrivateRoute roles={["admin"]}><DiscountsAdmin /></PrivateRoute>} />
-            <Route path="/admin/discount-carousel" element={<PrivateRoute roles={["admin"]}><DiscountCarouselAdmin /></PrivateRoute>} />
-            <Route path="/admin/support" element={<PrivateRoute roles={["admin"]}><SupportMessages /></PrivateRoute>} />
+              {/* Cart & wishlist */}
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
 
-            {/* Footer routes */}
-            <Route path="/shipping" element={<Shipping />} />
-            <Route path="/faqs" element={<FAQs />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/manwell-global" element={<ManwellGlobal />} />
-            <Route path="/manwell-pay" element={<ManwellPay />} />
-            <Route path="/manwell-food" element={<ManwellFood />} />
-            <Route path="/manwell-travel" element={<ManwellTravel />} />
+              {/* private routes */}
+              <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+              <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
+              <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
 
-            {/* 404 fallback */}
-            <Route path="*" element={<h2>404 - Not Found</h2>} />
-          
+              {/* Admin routes */}
+              <Route path="/admin/dashboard" element={<PrivateRoute roles={["admin"]}><AdminDashboard /></PrivateRoute>} />
+              <Route path="/admin/products" element={<PrivateRoute roles={["admin"]"><AdminProducts /></PrivateRoute>} />
+              <Route path="/admin/add-product" element={<PrivateRoute roles={["admin"]"><AddProduct /></PrivateRoute>} />
+              <Route path="/admin/orders" element={<PrivateRoute roles={["admin"]"><AdminOrders /></PrivateRoute>} />
+              <Route path="/admin/orders/:orderId" element={<PrivateRoute roles={["admin"]"><OrderDetails /></PrivateRoute>} />
+              <Route path="/admin/customers" element={<PrivateRoute roles={["admin"]"><AdminCustomers /></PrivateRoute>} />
+              <Route path="/admin/returns" element={<PrivateRoute roles={["admin"]"><AdminReturns /></PrivateRoute>} />
+              <Route path="/admin/deals" element={<PrivateRoute roles={["admin"]"><AdminDeals /></PrivateRoute>} />
+              <Route path="/admin/discounts" element={<PrivateRoute roles={["admin"]"><DiscountsAdmin /></PrivateRoute>} />
+              <Route path="/admin/discount-carousel" element={<PrivateRoute roles={["admin"]"><DiscountCarouselAdmin /></PrivateRoute>} />
+              <Route path="/admin/support" element={<PrivateRoute roles={["admin"]"><SupportMessages /></PrivateRoute>} />
+
+              {/* Footer routes */}
+              <Route path="/shipping" element={<Shipping />} />
+              <Route path="/faqs" element={<FAQs />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/manwell-global" element={<ManwellGlobal />} />
+              <Route path="/manwell-pay" element={<ManwellPay />} />
+              <Route path="/manwell-food" element={<ManwellFood />} />
+              <Route path="/manwell-travel" element={<ManwellTravel />} />
+
+              {/* 404 fallback */}
+              <Route path="*" element={<h2>404 - Not Found</h2>} />
+            </Routes>
           </main>
           <Footer />
         </Router>

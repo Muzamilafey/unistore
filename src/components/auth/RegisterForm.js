@@ -25,10 +25,54 @@ const RegisterForm = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
+    // clear email-specific error when user edits the email field
+    if (e.target.name === 'email') setEmailError('');
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Known/allowed email domains -- update this list as needed
+  const allowedEmailDomains = [
+    'gmail.com',
+    'yahoo.com',
+    'outlook.com',
+    'hotmail.com',
+    'icloud.com',
+  ];
+
+  const isValidEmailFormat = (email) => {
+    // Reasonably permissive RFC-like regex for client-side validation
+    // eslint-disable-next-line no-useless-escape
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const isAllowedEmail = (email) => {
+    if (!isValidEmailFormat(email)) return false;
+    const domain = email.split('@')[1]?.toLowerCase();
+    if (!domain) return false;
+    return allowedEmailDomains.includes(domain);
+  };
+
+  const handleEmailBlur = () => {
+    if (!form.email) {
+      setEmailError('Email is required');
+      return;
+    }
+    if (!isValidEmailFormat(form.email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+    if (!isAllowedEmail(form.email)) {
+      setEmailError(
+        `Email provider not allowed. Use one of: ${allowedEmailDomains.join(', ')}`
+      );
+      return;
+    }
+    setEmailError('');
   };
 
   const handleSubmit = async (e) => {
@@ -38,6 +82,15 @@ const RegisterForm = () => {
 
     if (!form.name || !form.email || !form.password) {
       setError('Name, email, and password are required');
+      return;
+    }
+
+    // Final client-side email validation before sending to API
+    if (!isAllowedEmail(form.email)) {
+      setError(
+        `Registration requires an email from a known provider: ${allowedEmailDomains.join(', ')}`
+      );
+      setLoading(false);
       return;
     }
 
@@ -86,11 +139,13 @@ const RegisterForm = () => {
               placeholder="Email"
               value={form.email}
               onChange={handleChange}
+              onBlur={handleEmailBlur}
               required
             />
             <span className="auth-form-icon" role="img" aria-label="email">
               
             </span>
+            {emailError && <p className="error" style={{ marginTop: 6 }}>{emailError}</p>}
           </div>
 
           <div className="auth-form-input-group">
