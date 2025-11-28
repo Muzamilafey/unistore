@@ -26,6 +26,7 @@ import CartPage from "./pages/cart";
 import CheckoutPage from "./pages/checkout";
 import OrdersPage from "./pages/orders";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import PaymentFailed from "./pages/PaymentFailed";
 import WishlistPage from "./pages/wishlist";
 import ProductsPage from "./pages/products";
 import CollectionsPage from "./pages/collections";
@@ -110,6 +111,7 @@ function App() {
               <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
               <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
               <Route path="/order-confirmation" element={<PrivateRoute><OrderConfirmation /></PrivateRoute>} />
+              <Route path="/payment-failed" element={<PaymentFailed />} />
 
               {/* Admin routes */}
               <Route path="/admin/dashboard" element={<PrivateRoute roles={["admin"]}><AdminDashboard /></PrivateRoute>} />
