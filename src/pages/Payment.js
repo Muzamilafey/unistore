@@ -14,8 +14,6 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
 
   const getPaymentIcon = (method) => {
     switch (method) {
-      case "Mpesa":
-        return "📱";
       case "Pay on Delivery":
         return "🚚";
       case "Card":
@@ -49,7 +47,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       return;
     }
 
-    if ((paymentMethod === "Mpesa" || paymentMethod === "Pesapal") && !validatePhone(phone)) {
+    if (paymentMethod === "Pesapal" && !validatePhone(phone)) {
       setMessage("⚠️ Please enter a valid phone number (07XXXXXXXX or 01XXXXXXXX)");
       return;
     }
@@ -69,7 +67,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         discount: discount,
         couponCode: couponCode,
         finalAmount,
-        phone: (paymentMethod === "Mpesa" || paymentMethod === "Pesapal") ? phone : undefined,
+        phone: paymentMethod === "Pesapal" ? phone : undefined,
       };
 
       const token = localStorage.getItem("token");
@@ -95,32 +93,6 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
           window.location.href = pesapalResponse.redirect_url;
         } else {
           setMessage("❌ Failed to initiate Pesapal payment.");
-        }
-      } else if (paymentMethod === "Mpesa") {
-        setMessage("📲 Sending M-PESA STK push...");
-
-        const stkResponse = await fetch(
-          `${process.env.REACT_APP_API_URL}/mpesa/stkpush`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              phone: phone.startsWith("254") ? phone : `254${phone.slice(-9)}`,
-              amount: finalAmount,
-            }),
-          }
-        );
-
-        const data = await stkResponse.json();
-
-        if (stkResponse.ok && data.success) {
-          setMessage("✅ STK Push sent! Check your M-PESA phone to complete payment.");
-        } else {
-          setMessage(
-            data?.error?.errorMessage ||
-              data?.message ||
-              "❌ Failed to initiate M-PESA payment."
-          );
         }
       } else {
         setMessage("✅ Order placed successfully (Pay on Delivery).");
@@ -174,17 +146,6 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
           <span className="option-label">Pay on Delivery</span>
         </label>
         <label className="option">
-          <div className="option-icon">{getPaymentIcon("Mpesa")}</div>
-          <input
-            type="radio"
-            name="paymentMethod"
-            value="Mpesa"
-            checked={paymentMethod === "Mpesa"}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-          />
-          <span className="option-label">Mpesa</span>
-        </label>
-        <label className="option">
           <div className="option-icon">{getPaymentIcon("Pesapal")}</div>
           <input
             type="radio"
@@ -197,7 +158,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         </label>
       </div>
 
-      {(paymentMethod === "Mpesa" || paymentMethod === "Pesapal") && (
+      {paymentMethod === "Pesapal" && (
         <div className="mpesa-input-box">
           <label>Enter Phone Number</label>
           <input
