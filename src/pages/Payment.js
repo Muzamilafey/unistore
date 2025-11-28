@@ -73,20 +73,32 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       const order = orderRes?.order || orderRes;
 
       if (paymentMethod === "Pesapal") {
-        setMessage(" Redirecting to Pesapal store for payment...");
-        // Build Pesapal store URL with amount pre-filled and merchant reference
-        const storeBase = 'https://store.pesapal.com/muzafey';
-        const merchantRef = order._id || order?.order?._id || order?.id;
-        const params = new URLSearchParams({
-          amount: String(finalAmount),
-          currency: 'KES',
-          merchant_reference: merchantRef,
-          email: shippingAddress.email || ''
-        });
-        const redirectTo = `${storeBase}?${params.toString()}`;
-        // Redirect user to Pesapal store — do not clear cart yet. Backend callback should finalize the order.
-        window.location.href = redirectTo;
-        return;
+        setMessage(" Redirecting to Pesapal for payment...");
+        const pesapalPayload = {
+          amount: finalAmount,
+          email: shippingAddress.email,
+          orderId: order._id || order?.order?._id || order?.id,
+        };
+
+        // Call backend which will SubmitOrderRequest to Pesapal and return the provider redirect URL
+        try {
+          const { data: pesapalResponse } = await api.post('/pesapal/initiate-payment', pesapalPayload, config);
+          // pesapalResponse should include redirect_url when successful
+          if (pesapalResponse && (pesapalResponse.redirect_url || pesapalResponse.redirectUrl)) {
+            const redirectUrl = pesapalResponse.redirect_url || pesapalResponse.redirectUrl;
+            // Redirect to Pesapal checkout (pre-filled by Pesapal) — do not clear cart here
+            window.location.href = redirectUrl;
+            return;
+          } else {
+            console.error('Pesapal initiation missing redirect_url:', pesapalResponse);
+            setMessage('❌ Pesapal initiation failed');
+            return;
+          }
+        } catch (initErr) {
+          console.error('Pesapal initiation error:', initErr.response || initErr.message || initErr);
+          setMessage('❌ Pesapal initiation failed');
+          return;
+        }
       } else {
         setMessage("✅ Order placed successfully (Pay on Delivery).");
         clearCart();
