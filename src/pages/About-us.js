@@ -1,20 +1,20 @@
 import React from "react";
 import "./pages.css"; // external stylesheet
 
-export default function AboutManwell() {
+export default function AboutUnistore() {
   return (
     <div className="about-container">
       <header className="about-hero">
         <div className="hero-content">
           <div className="hero-text">
-            <h1>Manwell Store</h1>
+            <h1>Unistore</h1>
             <p>
               Curating premium fashion for the modern you — handcrafted selections,
               quality fabrics, timeless styling. Visit us in Eastleigh, Nairobi.
             </p>
 
             <div className="hero-buttons">
-              <a href="#visit" className="btn-primary">Visit Us — Eastleigh</a>
+              <a href="#visit" className="btn-primary">Visit Us — Nairobi</a>
               <a href="#collections" className="btn-secondary">Explore Collections</a>
             </div>
 
@@ -36,7 +36,7 @@ export default function AboutManwell() {
 
           <div className="hero-image">
             <img
-              alt="Manwell Store - fashion display"
+              alt="Unistore - fashion display"
               src="/public/logo.png"
             />
             <p>A curated corner of premium fashion in Eastleigh — seasonal drops and classic staples.</p>
@@ -49,7 +49,7 @@ export default function AboutManwell() {
           <div className="mission-text">
             <h2>Our Mission</h2>
             <p>
-              At Manwell Store our mission is to provide premium, timeless fashion that empowers confidence.
+              At Unistore, our mission is to provide premium, timeless fashion that empowers confidence.
               We blend quality materials with considered design so every piece becomes a curated favorite in your wardrobe.
             </p>
 
@@ -61,11 +61,11 @@ export default function AboutManwell() {
           </div>
 
           <div className="mission-cards">
-            <h4>Why choose Manwell?</h4>
+            <h4>Why choose Unistore?</h4>
             <ul>
               <li>• Carefully selected fabrics & finishes.</li>
               <li>• Small-batch seasonal collections.</li>
-              <li>• Personalised fittings and styling advice.</li>
+              <li>• Personalized fittings and styling advice.</li>
               <li>• Transparent pricing and fair practices.</li>
             </ul>
           </div>
@@ -93,20 +93,20 @@ export default function AboutManwell() {
 
         <section id="visit" className="visit-section">
           <div className="visit-info">
-            <h2>Visit Manwell Store</h2>
+            <h2>Visit Unistore</h2>
             <p>We are located in the heart of Eastleigh. Drop by for a fitting or browse our latest collection in-person.</p>
 
             <div className="visit-details">
               <div><h4>Address</h4><p>Eastleigh, Nairobi, Kenya — (Find us on the main market street)</p></div>
               <div><h4>Store Hours</h4><p>Mon–Sat: 9:00 AM — 7:00 PM • Sun: 10:00 AM — 4:00 PM</p></div>
-              <div><h4>Contact</h4><p>Phone: +254 794 701 113 • Email: manwellstore@gmail.com</p></div>
-              <a href="mailto:manwellstore@gmail.com" className="btn-secondary">Email Us</a>
+              <div><h4>Contact</h4><p>Phone: +254 794 701 113 • Email: unistorekenya@gmail.com</p></div>
+              <a href="mailto:unistorekenya@gmail.com" className="btn-secondary">Email Us</a>
             </div>
           </div>
 
           <div className="map-container">
             <iframe
-              title="Manwell Store Location"
+              title="Unistore Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.123456789!2d36.8460!3d-1.2620!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sEastleigh%2C%20Nairobi!5e0!3m2!1sen!2ske!4v0000000000"
               allowFullScreen={false}
               loading="lazy"
@@ -128,7 +128,7 @@ export default function AboutManwell() {
         </section>
 
         <footer className="about-footer">
-          © {new Date().getFullYear()} Manwell Store — Premium fashion in Eastleigh. All rights reserved.
+          © {new Date().getFullYear()} Unistore — Premium fashion in Eastleigh. All rights reserved.
         </footer>
       </main>
     </div>
