@@ -40,6 +40,10 @@ const Pay = () => {
 
   const handlePayNow = async () => {
     if (!order) return;
+    if (order.paymentStatus === 'Paid') {
+      setMessage('This order is already paid.');
+      return;
+    }
     setMessage('Redirecting to payment provider...');
     try {
       const token = localStorage.getItem('token');
@@ -83,7 +87,9 @@ const Pay = () => {
           <p><strong>Payment Status:</strong> {order.paymentStatus || 'Unpaid'}</p>
 
           <div style={{ marginTop: 16 }}>
-            <button className="form-button" onClick={handlePayNow}>Pay Now</button>
+            <button className="form-button" onClick={handlePayNow} disabled={order.paymentStatus === 'Paid'}>
+              {order.paymentStatus === 'Paid' ? 'Already Paid' : 'Pay Now'}
+            </button>
             <button className="form-button" style={{ marginLeft: 8 }} onClick={() => navigate('/orders')}>Back to Orders</button>
           </div>
 
