@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import api from "../utils/api";
@@ -36,6 +36,16 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       : 0;
 
   const finalAmount = totalPrice - discountAmount;
+
+  // Pesapal maximum allowed amount (frontend-configurable)
+  const pesapalMax = Number(process.env.REACT_APP_PESAPAL_MAX_AMOUNT || 5000);
+
+  // If cart total exceeds Pesapal limit and Pesapal is currently selected, fallback to Pay on Delivery
+  useEffect(() => {
+    if (paymentMethod === 'Pesapal' && finalAmount > pesapalMax) {
+      setPaymentMethod('Pay on Delivery');
+    }
+  }, [finalAmount, pesapalMax, paymentMethod]);
 
   const handlePayment = async () => {
     if (!cartItems.length) {
@@ -157,10 +167,18 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
             value="Pesapal"
             checked={paymentMethod === "Pesapal"}
             onChange={(e) => setPaymentMethod(e.target.value)}
+            disabled={finalAmount > pesapalMax}
+            title={finalAmount > pesapalMax ? `Pesapal disabled for orders above KES ${pesapalMax}` : 'Pay with Pesapal'}
           />
           <span className="option-label">Pesapal</span>
         </label>
       </div>
+
+      {finalAmount > pesapalMax && (
+        <div style={{ marginTop: 8, color: '#b71c1c', fontSize: 14 }}>
+          ⚠️ Pesapal is not available for orders above KES {pesapalMax.toLocaleString()}. Please choose Pay on Delivery or contact support to increase your Pesapal limit.
+        </div>
+      )}
 
       {/* No phone input required for Pesapal - amount is auto-filled on Pesapal site */}
 
