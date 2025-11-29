@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../utils/api';
 import AdminNavbar from './AdminSidebar';
+import AppLockModal from '../../components/admin/AppLockModal';
 import './AdminDashboard.css';
 import './customers.css';
 import styles from './dashboard.module.css';
@@ -15,6 +16,34 @@ const AdminCustomers = () => {
   const [error, setError] = useState('');
   const [search, setSearch] = useState("");
   const [actionError, setActionError] = useState("");
+  const [showLockModal, setShowLockModal] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [lockStatus, setLockStatus] = useState(null);
+
+  useEffect(() => {
+    checkAppLockStatus();
+  }, []);
+
+  const checkAppLockStatus = async () => {
+    try {
+      const { data } = await api.get('/admin/applock/status');
+      setLockStatus(data);
+      if (data.hasPin && data.isEnabled) {
+        setShowLockModal(true);
+        setLoading(false);
+      } else {
+        fetchCustomers();
+      }
+    } catch (err) {
+      console.error('Failed to check app lock status', err);
+      fetchCustomers();
+    }
+  };
+
+  const handleVerified = () => {
+    setIsVerified(true);
+    fetchCustomers();
+  };
 
   const fetchCustomers = async () => {
     try {
@@ -28,8 +57,10 @@ const AdminCustomers = () => {
   };
 
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    if (!isVerified && !loading) {
+      fetchCustomers();
+    }
+  }, [isVerified]);
 
   const handleDeactivate = async id => {
     if (!window.confirm('Deactivate this customer?')) return;
@@ -128,6 +159,12 @@ const AdminCustomers = () => {
 
   return (
     <div className="admin-orders-bg">
+      <AppLockModal
+        isOpen={showLockModal && !isVerified}
+        onClose={() => {}}
+        onVerified={handleVerified}
+      />
+
       <AdminNavbar />
       <main
         className="admin-content"
