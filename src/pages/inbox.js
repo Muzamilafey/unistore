@@ -34,7 +34,8 @@ const Inbox = () => {
 
     try {
       await api.put('/orders/reminders/mark-read', {
-        orderId: reminder.orderId,
+        // pass the DB order id so backend can find the order document
+        orderId: reminder.orderDbId || reminder.orderId,
         reminderId: reminder._id,
       });
 
@@ -47,7 +48,9 @@ const Inbox = () => {
 
   const handlePayNow = (reminder) => {
     markAsRead(reminder);
-    window.location.href = `/pay?orderId=${reminder.orderId}`;
+    // navigate to pay page using DB order id (orderDbId) so the pay page can fetch the order
+    const dbId = reminder.orderDbId || reminder.orderId;
+    window.location.href = `/pay?orderId=${dbId}`;
   };
 
   // Filter reminders
