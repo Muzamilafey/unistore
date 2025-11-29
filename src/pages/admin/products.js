@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../utils/api";
 import AdminNavbar from './AdminSidebar';
+import AddProductForm from '../../components/admin/AddProductForm';
 import './AdminDashboard.css';
 import './products.css';
 import { useNavigate } from 'react-router-dom';
@@ -236,71 +237,10 @@ const AdminProducts = () => {
               <h2>{editingProduct ? "Edit Product" : "Add Product"}</h2>
               {error && <div className="admin-error">{error}</div>}
               {success && <div className="admin-success">{success}</div>}
-              <form onSubmit={handleSubmit} noValidate>
-              <input
-                name="name"
-                placeholder="Name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className="admin-input"
-              />
-              <textarea
-                name="description"
-                placeholder="Description"
-                value={form.description}
-                onChange={handleChange}
-                className="admin-textarea"
-              />
-              <input
-                name="price"
-                type="number"
-                step="0.01"
-                placeholder="Price"
-                value={form.price}
-                onChange={handleChange}
-                required
-                className="admin-input"
-              />
-              <input
-                name="category"
-                placeholder="Category"
-                value={form.category}
-                onChange={handleChange}
-                className="admin-input"
-              />
-              <input
-                name="stock"
-                type="number"
-                placeholder="Stock"
-                value={form.stock}
-                onChange={handleChange}
-                className="admin-input"
-              />
-              <input
-                name="image"
-                placeholder="Image URL"
-                value={form.image}
-                onChange={handleChange}
-                className="admin-input"
-              />
-              <div>
-                <button type="submit" disabled={loading} className="admin-btn">
-                  {loading
-                    ? "Saving..."
-                    : editingProduct
-                    ? "Update"
-                    : "Add"}
-                </button>
-                <button
-                  type="button"
-                  className="admin-btn"
-                  onClick={clearForm}
-                >
-                  Cancel
-                </button>
+              <AddProductForm product={editingProduct} onDone={() => { clearForm(); fetchProducts(); }} />
+              <div style={{ marginTop: 12 }}>
+                <button type="button" className="admin-btn" onClick={clearForm}>Close</button>
               </div>
-              </form>
             </div>
           </div>
         )}

@@ -1,20 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import './AddProductForm.css';
-import { useNavigate } from 'react-router-dom';
 import axios from '../../utils/api';
 
-const AddProductForm = () => {
+// Props:
+// - product: optional product object for editing
+// - onDone: callback when operation completes (add or update)
+const AddProductForm = ({ product = null, onDone = () => {} }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [stock, setStock] = useState(0);
-  const [images, setImages] = useState([]);
-  const [previews, setPreviews] = useState([]); // {file, url}
+  const [images, setImages] = useState([]); // new File objects to upload
+  const [existingImages, setExistingImages] = useState([]); // existing image URLs (when editing)
+  const [previews, setPreviews] = useState([]); // previews for new files: {file, url}
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
-  const navigate = useNavigate();
+
+  // populate when editing
+  useEffect(() => {
+    if (product) {
+      setName(product.name || '');
+      setPrice(product.price != null ? String(product.price) : '');
+      setDescription(product.description || '');
+      setCategory(product.category || '');
+      setStock(product.stock != null ? String(product.stock) : '0');
+      // product may have images[] or image url
+      const urls = [];
+      if (product.images && Array.isArray(product.images)) {
+        product.images.forEach((it) => {
+          if (typeof it === 'string') urls.push(it);
+          else if (it.url) urls.push(it.url);
+        });
+      }
+      if (product.image && typeof product.image === 'string') urls.push(product.image);
+      setExistingImages(urls);
+    }
+  }, [product]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files).slice(0, 5); // limit to 5 files
@@ -31,6 +54,10 @@ const AddProductForm = () => {
     };
   }, [images]);
 
+  const removeExistingImage = (url) => {
+    setExistingImages(existingImages.filter((u) => u !== url));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -44,34 +71,43 @@ const AddProductForm = () => {
       formData.append('category', category);
       formData.append('stock', stock);
 
+      // include any existing image URLs to keep (backend may ignore if not supported)
+      if (existingImages.length > 0) {
+        formData.append('existingImages', JSON.stringify(existingImages));
+      }
+
       images.forEach((file) => {
         formData.append('images', file);
       });
 
-      const res = await axios.post('/products', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      let res;
+      if (product && product._id) {
+        // update - send multipart PUT
+        res = await axios.put(`/products/${product._id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        setMessage('Product updated successfully');
+      } else {
+        res = await axios.post('/products', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        setMessage('Product created successfully');
+      }
 
-      setMessage('Product created successfully');
       setShowToast(true);
-      // reset form
-      setName('');
-      setPrice('');
-      setDescription('');
-      setCategory('');
-      setStock(0);
+
+      // reset local file inputs only (keep existingImages if editing)
       setImages([]);
 
-      // after short delay, navigate to admin products list
-      setTimeout(() => {
-        setShowToast(false);
-        navigate('/admin/products');
-      }, 1200);
+      // call onDone so parent can close modal and refresh list
+      onDone(res?.data || {});
+
     } catch (err) {
       console.error(err);
-      setMessage(err?.response?.data?.message || 'Failed to create product');
+      setMessage(err?.response?.data?.message || 'Failed to save product');
     } finally {
       setLoading(false);
+      setTimeout(() => setShowToast(false), 1400);
     }
   };
 
@@ -100,6 +136,21 @@ const AddProductForm = () => {
       <div>
         <label className="admin-input-label">Images (up to 5)</label>
         <input type="file" accept="image/*" multiple onChange={handleFileChange} />
+
+        {/* show existing image URLs when editing */}
+        {existingImages.length > 0 && (
+          <div className="preview existing-previews" style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            {existingImages.map((url, idx) => (
+              <div key={`e-${idx}`} style={{ position: 'relative' }}>
+                <img src={url} alt={`existing-${idx}`} style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 4 }} />
+                <button type="button" onClick={() => removeExistingImage(url)}
+                  style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: 12, width: 24, height: 24, cursor: 'pointer' }}
+                >×</button>
+              </div>
+            ))}
+          </div>
+        )}
+
         {previews.length > 0 && (
           <div className="preview" style={{ display: 'flex', gap: 8, marginTop: 8 }}>
             {previews.map((p, idx) => (
@@ -117,7 +168,9 @@ const AddProductForm = () => {
           </div>
         )}
       </div>
-      <button type="submit" disabled={loading}>{loading ? 'Uploading...' : 'Add Product'}</button>
+      <div style={{ marginTop: 12 }}>
+        <button type="submit" disabled={loading}>{loading ? 'Saving...' : (product ? 'Update Product' : 'Add Product')}</button>
+      </div>
       {message && <div className="message">{message}</div>}
       {showToast && (
         <div className="inline-toast" style={{ position: 'fixed', right: 20, top: 20, background: '#22c55e', color: '#fff', padding: '8px 12px', borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
