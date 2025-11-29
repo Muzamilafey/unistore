@@ -8,6 +8,7 @@ const DiscountCarouselAdmin = () => {
   const [products, setProducts] = useState([]);
   const [selected, setSelected] = useState([]);
   const [saved, setSaved] = useState(false);
+  const [discountPercent, setDiscountPercent] = useState(10);
 
   useEffect(() => {
     const load = async () => {
@@ -25,7 +26,10 @@ const DiscountCarouselAdmin = () => {
     const load = async () => {
       try {
         const { data } = await api.get('/admin/discounted-carousel');
-        setSelected(data.map(p => p._id));
+        // API returns { products, discountPercent }
+        const products = data.products || [];
+        setSelected(products.map(p => p._id));
+        if (typeof data.discountPercent !== 'undefined') setDiscountPercent(Number(data.discountPercent));
       } catch (err) {
         console.error('Failed to load current carousel:', err);
       }
@@ -43,7 +47,7 @@ const DiscountCarouselAdmin = () => {
 
   const save = async () => {
     try {
-      await api.post('/admin/discounted-carousel', { productIds: selected });
+      await api.post('/admin/discounted-carousel', { productIds: selected, discountPercent: Number(discountPercent) });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
@@ -73,6 +77,19 @@ const DiscountCarouselAdmin = () => {
             <div className="dca-check">{selected.includes(p._id) ? '✓' : ''}</div>
           </div>
         ))}
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <label style={{ fontWeight: 600, marginRight: 8 }}>Discount percent to apply:</label>
+        <input
+          type="number"
+          value={discountPercent}
+          onChange={(e) => setDiscountPercent(e.target.value)}
+          min="0"
+          max="100"
+          style={{ width: 100, padding: '6px 8px', borderRadius: 6, border: '1px solid #ddd' }}
+        />
+        <span style={{ marginLeft: 8, color: '#666' }}>%</span>
       </div>
 
       <div className="dca-actions">

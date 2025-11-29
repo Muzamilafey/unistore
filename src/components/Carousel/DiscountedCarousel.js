@@ -10,8 +10,10 @@ const DiscountedCarousel = () => {
     const load = async () => {
       try {
         const { data } = await api.get('/admin/discounted-carousel');
+        // API now returns { products, discountPercent }
         console.log('Discounted carousel loaded:', data);
-        setItems(data);
+        const products = data.products || data || [];
+        setItems(products);
       } catch (err) {
         console.error('Failed to load discounted carousel:', err);
         setItems([]);
