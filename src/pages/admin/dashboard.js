@@ -4,6 +4,7 @@ import api from '../../utils/api';
 import AdminNavbar from './AdminSidebar';
 import CategoryModal from '../../components/admin/CategoryModal';
 import ShippingFeeModal from '../../components/admin/ShippingFeeModal';
+import AdminsModal from '../../components/admin/AdminsModal';
 import { Line, Doughnut } from 'react-chartjs-2';
 import { Chart, LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import jsPDF from 'jspdf';
@@ -26,6 +27,7 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [showCategories, setShowCategories] = useState(false);
   const [showShippingFee, setShowShippingFee] = useState(false);
+  const [showAdmins, setShowAdmins] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -228,6 +230,7 @@ const DashboardPage = () => {
                 <div className="panel-controls" style={{ display: 'flex', gap: 12 }}>
                   <button onClick={() => setShowShippingFee(true)} className="see-all" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', textDecoration: 'underline' }}>Manage Shipping Fee</button>
                   <button onClick={() => setShowCategories(true)} className="see-all" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', textDecoration: 'underline' }}>Manage Categories</button>
+                  <button onClick={() => setShowAdmins(true)} className="see-all" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', textDecoration: 'underline' }}>Manage Admins</button>
                   <a href="#" className="see-all">See All</a>
                 </div>
               </div>
@@ -276,6 +279,7 @@ const DashboardPage = () => {
       </main>
       {showCategories && <CategoryModal onClose={() => setShowCategories(false)} onCreated={() => {}} />}
       {showShippingFee && <ShippingFeeModal onClose={() => setShowShippingFee(false)} onUpdated={() => {}} />}
+      {showAdmins && <AdminsModal onClose={() => setShowAdmins(false)} />}
     </div>
   );
 };
