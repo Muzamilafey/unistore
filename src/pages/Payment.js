@@ -85,7 +85,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       const order = orderRes?.order || orderRes;
 
       if (paymentMethod === "Pesapal") {
-        setMessage(" Redirecting to Pesapal for payment...");
+        setMessage("🔄 Redirecting to Pesapal...");
         const pesapalPayload = {
           amount: finalAmount,
           email: shippingAddress.email,
@@ -98,17 +98,19 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
           // pesapalResponse should include redirect_url when successful
           if (pesapalResponse && (pesapalResponse.redirect_url || pesapalResponse.redirectUrl)) {
             const redirectUrl = pesapalResponse.redirect_url || pesapalResponse.redirectUrl;
-            // Redirect to Pesapal checkout (pre-filled by Pesapal) — do not clear cart here
+            // Redirect to Pesapal checkout immediately — do not clear cart here
             window.location.href = redirectUrl;
             return;
           } else {
             console.error('Pesapal initiation missing redirect_url:', pesapalResponse);
-            setMessage('❌ Pesapal initiation failed. retry or choose another payment option');
+            setMessage('❌ Pesapal initiation failed. Please retry or choose another payment option.');
+            setLoading(false);
             return;
           }
         } catch (initErr) {
           console.error('Pesapal initiation error:', initErr.response || initErr.message || initErr);
-          setMessage('❌ Pesapal initiation failed.retry or choose another payment option');
+          setMessage('❌ Pesapal initiation failed. Please retry or choose another payment option.');
+          setLoading(false);
           return;
         }
       } else {
@@ -196,6 +198,31 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       </button>
 
       {message && <p className="status-message">{message}</p>}
+
+      {/* Loading overlay for Pesapal redirect */}
+      {loading && paymentMethod === "Pesapal" && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: '#fff',
+            padding: '24px',
+            borderRadius: '12px',
+            textAlign: 'center',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          }}>
+            <div style={{ fontSize: '2rem', marginBottom: '12px' }}>🔄</div>
+            <p style={{ margin: 0, fontSize: '1rem', color: '#1f2937', fontWeight: 600 }}>Redirecting to Pesapal...</p>
+            <p style={{ margin: '8px 0 0 0', fontSize: '0.85rem', color: '#6b7280' }}>Please wait while we process your payment</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
