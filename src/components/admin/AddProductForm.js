@@ -10,8 +10,8 @@ const AddProductForm = ({ product = null, onDone = () => {} }) => {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-+  const [stock, setStock] = useState(0);
-+  const [categories, setCategories] = useState([]);
+  const [stock, setStock] = useState(0);
+  const [categories, setCategories] = useState([]);
   const [images, setImages] = useState([]); // new File objects to upload
   const [existingImages, setExistingImages] = useState([]); // existing image URLs (when editing)
   const [previews, setPreviews] = useState([]); // previews for new files: {file, url}
