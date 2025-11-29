@@ -8,10 +8,12 @@ const adminNavLinks = [
   { label: 'Products', to: '/admin/products' },
   { label: 'Orders', to: '/admin/orders' },
   { label: 'Customers', to: '/admin/customers' },
+  { label: 'Transactions', to: '/admin/transactions' },
   { label: 'Manage Returns', to: '/admin/returns' },
   { label: 'Support Messages', to: '/admin/support', icon: <FaHeadset /> },
   { label: 'Manage Discounts', to: '/admin/discounts' },
   { label: 'Carousel Settings', to: '/admin/discount-carousel' },
+  { label: '🔐 App Lock', to: '/admin/applock' },
 ];
 
 const AdminNavbar = () => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminNavbar from './AdminSidebar';
 import api from '../../utils/api';
+import AppLockModal from '../../components/admin/AppLockModal';
 import './AdminDashboard.css';
 
 const AdminTransactions = () => {
@@ -8,6 +9,29 @@ const AdminTransactions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [showLockModal, setShowLockModal] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [lockStatus, setLockStatus] = useState(null);
+
+  useEffect(() => {
+    checkAppLockStatus();
+  }, []);
+
+  const checkAppLockStatus = async () => {
+    try {
+      const { data } = await api.get('/admin/applock/status');
+      setLockStatus(data);
+      if (data.hasPin && data.isEnabled) {
+        setShowLockModal(true);
+        setLoading(false);
+      } else {
+        fetchTransactions();
+      }
+    } catch (err) {
+      console.error('Failed to check app lock status', err);
+      fetchTransactions();
+    }
+  };
 
   const fetchTransactions = async () => {
     try {
@@ -21,9 +45,10 @@ const AdminTransactions = () => {
     }
   };
 
-  useEffect(() => {
+  const handleVerified = () => {
+    setIsVerified(true);
     fetchTransactions();
-  }, []);
+  };
 
   const filtered = transactions.filter(t =>
     (t._id || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -37,6 +62,12 @@ const AdminTransactions = () => {
 
   return (
     <div className="admin-orders-bg">
+      <AppLockModal
+        isOpen={showLockModal && !isVerified}
+        onClose={() => {}}
+        onVerified={handleVerified}
+      />
+
       <AdminNavbar />
       <main className="admin-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
         <h2 className="admin-page-title">Transactions</h2>

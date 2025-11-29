@@ -42,6 +42,7 @@ import AdminReturns from "./pages/admin/returns";
 import OrderDetails from './pages/admin/OrderDetails';
 import DiscountsAdmin from "./pages/admin/DiscountsAdmin";
 import AdminTransactions from "./pages/admin/transactions";
+import AdminAppLock from "./pages/admin/AppLock";
 
 // 📌 Footer pages
 import HelpCenter from "./pages/Contact";
@@ -122,6 +123,7 @@ function App() {
               <Route path="/admin/product/addproduct" element={<PrivateRoute roles={["admin"]}><AddProduct /></PrivateRoute>} />
               <Route path="/admin/orders" element={<PrivateRoute roles={["admin"]}><AdminOrders /></PrivateRoute>} />
               <Route path="/admin/transactions" element={<PrivateRoute roles={["admin"]}><AdminTransactions /></PrivateRoute>} />
+              <Route path="/admin/applock" element={<PrivateRoute roles={["admin"]}><AdminAppLock /></PrivateRoute>} />
               <Route path="/admin/orders/:orderId" element={<PrivateRoute roles={["admin"]}><OrderDetails /></PrivateRoute>} />
               <Route path="/admin/customers" element={<PrivateRoute roles={["admin"]}><AdminCustomers /></PrivateRoute>} />
               <Route path="/admin/returns" element={<PrivateRoute roles={["admin"]}><AdminReturns /></PrivateRoute>} />
