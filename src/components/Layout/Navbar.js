@@ -32,17 +32,9 @@ const Navbar = () => {
 
     const fetchUnreadCount = async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/orders/reminders/all`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.ok) {
-          const reminders = await response.json();
-          const unread = reminders.filter((r) => !r.read).length;
+        const response = await api.get('/orders/reminders/all');
+        if (response.data && Array.isArray(response.data)) {
+          const unread = response.data.filter((r) => !r.read).length;
           setUnreadCount(unread);
         }
       } catch (err) {

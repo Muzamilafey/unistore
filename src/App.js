@@ -27,6 +27,7 @@ import CheckoutPage from "./pages/checkout";
 import OrdersPage from "./pages/orders";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import PaymentFailed from "./pages/PaymentFailed";
+import PayPage from "./pages/pay";
 import Inbox from "./pages/inbox";
 import WishlistPage from "./pages/wishlist";
 import ProductsPage from "./pages/products";
@@ -113,6 +114,7 @@ function App() {
               <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
               <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
               <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
+              <Route path="/pay" element={<PrivateRoute><PayPage /></PrivateRoute>} />
               <Route path="/order-confirmation" element={<PrivateRoute><OrderConfirmation /></PrivateRoute>} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/inbox" element={<PrivateRoute><Inbox /></PrivateRoute>} />
