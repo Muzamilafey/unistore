@@ -15,7 +15,8 @@ const DealsList = () => {
     let mounted = true;
     
     Promise.all([
-      api.get('/deals/active'),
+      // fetch all created deals (not only active) so homepage shows every deal
+      api.get('/deals'),
       api.get('/products')
     ])
       .then(([{ data: dealsData }, { data: productsData }]) => {
@@ -56,7 +57,9 @@ const DealsList = () => {
     addToCart(product, 1);
   };
 
-  if (loading || !deals.length) return null;
+  if (loading) return null;
+  // if there are no deals, render nothing
+  if (!deals.length) return null;
 
   return (
     <div className="deals-list-section">
