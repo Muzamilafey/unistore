@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import '../components/admin/admin.css';
 
 const Inbox = () => {
   const { user, token } = useContext(AuthContext);
