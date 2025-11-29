@@ -86,7 +86,7 @@ const OrderConfirmation = () => {
           <h3>Order Items</h3>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {order.orderItems?.map((item, idx) => (
-              <li key={idx} style={{ borderBottom: "1px solid #3d9494ff", padding: "0.5rem 0" }}>
+              <li key={idx} style={{ borderBottom: "1px solid #010811ff", padding: "0.5rem 0" }}>
                 <strong>{item.product?.name}</strong> x {item.qty} @ KES {item.price?.toFixed(2) || 0}
               </li>
             ))}
@@ -98,9 +98,13 @@ const OrderConfirmation = () => {
               : "✅ Payment Received"}
           </p>
 
-          <button onClick={() => navigate("/orders")} className="form-button" style={{ marginTop: "1.5rem" }}>
-            View All Orders
+          <button
+              onClick={() => navigate("/orders")}
+              className="cool-btn"
+            >
+              View All Orders
           </button>
+
         </div>
       )}
     </div>

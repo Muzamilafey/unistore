@@ -456,3 +456,27 @@
     justify-content: center;
   }
 }
+
+
+.cool-btn {
+  margin-top: 1.5rem;
+  padding: 12px 26px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.32);
+}
+
+.cool-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
+}
+
+.cool-btn:active {
+  transform: scale(0.96);
+}
