@@ -3,6 +3,7 @@ import api from "../../utils/api";
 import AdminNavbar from './AdminSidebar';
 import './AdminDashboard.css';
 import './products.css';
+import { useNavigate } from 'react-router-dom';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -18,6 +19,7 @@ const AdminProducts = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sort, setSort] = useState('newest');
   const [editingProduct, setEditingProduct] = useState(null);
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -220,7 +222,7 @@ const AdminProducts = () => {
             
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className="admin-btn-primary" onClick={() => { clearForm(); setShowForm(true); }}>+ Add Product</button>
+              <button className="admin-btn-primary" onClick={() => navigate('/admin/product/addproduct')}>+ Add Product</button>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="admin-btn-secondary" onClick={handleDownloadExcel}>Download Excel</button>

@@ -57,6 +57,16 @@ const AdminTransactions = () => {
     (t.phoneNumber || '').toLowerCase().includes(search.toLowerCase())
   );
 
+  // compute total received (sum of successful/paid transactions)
+  const totalReceived = transactions.reduce((sum, t) => {
+    const amt = Number(t.amount) || 0;
+    const st = (t.status || '').toString().toLowerCase();
+    if (st.includes('paid') || st.includes('completed') || st.includes('accepted') || st.includes('success')) {
+      return sum + amt;
+    }
+    return sum;
+  }, 0);
+
   if (loading) return <div className="admin-loading">Loading transactions...</div>;
   if (error) return <div className="admin-error">{error}</div>;
 
@@ -71,6 +81,13 @@ const AdminTransactions = () => {
       <AdminNavbar />
       <main className="admin-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
         <h2 className="admin-page-title">Transactions</h2>
+        <div className="admin-summary-cards" style={{ marginBottom: 12 }}>
+          <div className="admin-summary-card">
+            <div className="admin-summary-title">Total Received</div>
+            <div className="admin-summary-value">KES {Number(totalReceived).toLocaleString()}</div>
+            <div style={{ color: '#94a3b8', fontSize: 13 }}>All successful transactions</div>
+          </div>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
           <input
             type="text"
