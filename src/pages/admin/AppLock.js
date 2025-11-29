@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../utils/api';
 import AdminNavbar from './AdminSidebar';
+import AppLockModal from '../../components/admin/AppLockModal';
 import './AdminDashboard.css';
 
 const AdminAppLock = () => {
@@ -11,6 +12,9 @@ const AdminAppLock = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [pendingToggleEnabled, setPendingToggleEnabled] = useState(null);
 
   useEffect(() => {
     fetchLockStatus();
@@ -49,17 +53,15 @@ const AdminAppLock = () => {
     }
 
     try {
-      // If changing existing PIN, prompt for current PIN
-      let previousPin = undefined;
+      // If changing existing PIN, show verify modal to get current PIN
       if (lockStatus?.hasPin) {
-        previousPin = window.prompt('Enter your current PIN to confirm change');
-        if (!previousPin) {
-          setError('Current PIN required to change PIN');
-          return;
-        }
+        setPendingAction('setPin');
+        setShowVerifyModal(true);
+        return;
       }
 
-      await api.post('/admin/applock/set-pin', { pin, previousPin });
+      // No previous PIN required
+      await api.post('/admin/applock/set-pin', { pin });
       setSuccess('PIN set successfully!');
       setPin('');
       setConfirmPin('');
@@ -72,22 +74,49 @@ const AdminAppLock = () => {
 
   const handleToggleAppLock = async (enabled) => {
     try {
-      let body = { isEnabled: enabled };
-      // if we're disabling, require current PIN confirmation
+      // if disabling, require current PIN confirmation via modal
       if (!enabled) {
-        const current = window.prompt('Enter current PIN to disable app lock');
-        if (!current) {
-          setError('Current PIN required to disable lock');
-          return;
-        }
-        body.previousPin = current;
+        setPendingAction('toggle');
+        setPendingToggleEnabled(enabled);
+        setShowVerifyModal(true);
+        return;
       }
+
+      const body = { isEnabled: enabled };
       await api.put('/admin/applock/toggle', body);
       fetchLockStatus();
       setSuccess(`App lock ${enabled ? 'enabled' : 'disabled'} successfully!`);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to toggle app lock');
     }
+  };
+
+  // called when AppLockModal verifies PIN and returns the pin value
+  const handleVerifiedPin = async (verifiedPin) => {
+    setShowVerifyModal(false);
+    if (pendingAction === 'setPin') {
+      try {
+        await api.post('/admin/applock/set-pin', { pin, previousPin: verifiedPin });
+        setSuccess('PIN set successfully!');
+        setPin('');
+        setConfirmPin('');
+        setShowForm(false);
+        fetchLockStatus();
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to set PIN');
+      }
+    }
+    if (pendingAction === 'toggle') {
+      try {
+        await api.put('/admin/applock/toggle', { isEnabled: pendingToggleEnabled, previousPin: verifiedPin });
+        fetchLockStatus();
+        setSuccess(`App lock ${pendingToggleEnabled ? 'enabled' : 'disabled'} successfully!`);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to toggle app lock');
+      }
+    }
+    setPendingAction(null);
+    setPendingToggleEnabled(null);
   };
 
   if (loading) return <div className="admin-loading">Loading...</div>;
@@ -264,6 +293,7 @@ const AdminAppLock = () => {
           </ul>
         </div>
       </main>
+      <AppLockModal isOpen={showVerifyModal} onClose={() => setShowVerifyModal(false)} onVerified={handleVerifiedPin} />
     </div>
   );
 };

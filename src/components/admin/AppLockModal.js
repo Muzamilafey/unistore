@@ -15,7 +15,8 @@ const AppLockModal = ({ isOpen, onClose, onVerified }) => {
       await api.post('/admin/applock/verify-pin', { pin });
       setPin('');
       setLoading(false);
-      onVerified();
+      // pass the verified pin back to caller for actions that require the PIN
+      if (onVerified) onVerified(pin);
       onClose();
     } catch (err) {
       setLoading(false);
