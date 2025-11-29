@@ -9,7 +9,11 @@ const WishlistPage = () => {
 
   useEffect(() => {
     const load = async () => {
-      const ids = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+      let ids = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+      if (!Array.isArray(ids)) ids = [];
+      ids = ids.map((v) => (v && typeof v === 'object' ? (v._id || v.id || String(v)) : String(v)));
+      // unique
+      ids = Array.from(new Set(ids));
       if (ids.length === 0) {
         setItems([]);
         return;
@@ -29,7 +33,10 @@ const WishlistPage = () => {
   }, [user, token]);
 
   const remove = (id) => {
-    const next = (JSON.parse(localStorage.getItem('mw_wishlist') || '[]')).filter(i => i !== id);
+    let list = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+    if (!Array.isArray(list)) list = [];
+    list = list.map((v) => (v && typeof v === 'object' ? (v._id || v.id || String(v)) : String(v)));
+    const next = list.filter((i) => i !== id);
     localStorage.setItem('mw_wishlist', JSON.stringify(next));
     setItems(items.filter(i => i._id !== id));
 

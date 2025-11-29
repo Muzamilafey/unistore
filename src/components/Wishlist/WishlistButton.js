@@ -6,8 +6,11 @@ const WishlistButton = ({ productId }) => {
 
   useEffect(() => {
     try {
-      const list = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
-      setFav(list.includes(productId));
+      let list = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+      // normalize stored values to an array of id strings
+      if (!Array.isArray(list)) list = [];
+      list = list.map((v) => (v && typeof v === 'object' ? (v._id || v.id || String(v)) : String(v)));
+      setFav(list.includes(String(productId)));
     } catch (e) {
       setFav(false);
     }
@@ -17,13 +20,18 @@ const WishlistButton = ({ productId }) => {
     e.stopPropagation();
     e.preventDefault();
     try {
-      const list = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+      let list = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+      if (!Array.isArray(list)) list = [];
+      // normalize to string ids
+      list = list.map((v) => (v && typeof v === 'object' ? (v._id || v.id || String(v)) : String(v)));
+      const idStr = String(productId);
       let next;
-      if (list.includes(productId)) {
-        next = list.filter((id) => id !== productId);
+      if (list.includes(idStr)) {
+        next = list.filter((id) => id !== idStr);
         setFav(false);
       } else {
-        next = [productId, ...list];
+        // add to front and ensure uniqueness
+        next = [idStr, ...list.filter((id) => id !== idStr)];
         setFav(true);
       }
       localStorage.setItem('mw_wishlist', JSON.stringify(next));
