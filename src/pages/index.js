@@ -14,7 +14,7 @@ const HomePage = () => {
   return (
     <div className="products-section">
       {/* DEBUG: show API response to help diagnose deployment issues */}
-      <ApiDebug />
+      
       <div className="hero-carousel-wrapper">
         <DiscountedCarousel />
       </div>
