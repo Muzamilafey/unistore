@@ -241,43 +241,67 @@ const AdminProducts = () => {
           </div>
         )}
         <section className="products-table-section">
-          <table className="orders-table" style={{ width: '100%', background: 'transparent', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ fontWeight: 700, fontSize: '1.05rem', color: '#222' }}>
-                <th style={{ padding: '12px 8px' }}>Name</th>
-                <th style={{ padding: '12px 8px' }}>Price</th>
-                <th style={{ padding: '12px 8px' }}>Stock</th>
-                <th style={{ padding: '12px 8px' }}>Category</th>
-                <th style={{ padding: '12px 8px' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.length === 0 ? (
+          <div className="admin-search-bar">
+            <input className="admin-search-input" placeholder="Search by name, Product ID..." onChange={e => { /* TODO: implement search */ }} />
+            <select className="admin-filter-select">
+              <option value="all">All Status</option>
+              <option value="published">Published</option>
+              <option value="out-of-stock">Out of Stock</option>
+              <option value="draft">Draft</option>
+            </select>
+            <select className="admin-filter-select">
+              <option>01 Jan,2024 to 31 Dec,2024</option>
+            </select>
+          </div>
+
+          <div className="admin-table-wrapper">
+            <table className="admin-table products-table" style={{ width: '100%' }}>
+              <thead>
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '16px', color: '#888' }}>
-                    No products found.
-                  </td>
+                  <th style={{ width: 320 }}>Product Name</th>
+                  <th>ID & Create Date</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ) : (
-                products.map((p) => (
-                  <tr key={p._id}>
-                    <td style={{ padding: '12px 8px' }}>{p.name}</td>
-                    <td style={{ padding: '12px 8px' }}>KES {(Number(p?.price) || 0).toFixed(2)}</td>
-                    <td style={{ padding: '12px 8px' }}>{p.stock}</td>
-                    <td style={{ padding: '12px 8px' }}>{p.category}</td>
-                    <td style={{ padding: '12px 8px' }}>
-                      <button className="admin-btn" onClick={() => handleEdit(p)}>
-                        Edit
-                      </button>
-                      <button className="admin-btn" onClick={() => handleDelete(p._id)}>
-                        Delete
-                      </button>
-                    </td>
+              </thead>
+              <tbody>
+                {products.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>No products found.</td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  products.map((p) => (
+                    <tr key={p._id}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <img src={p.image || p.images?.[0]?.url || ''} alt={p.name} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8 }} />
+                          <div>
+                            <div style={{ fontWeight: 700 }}>{p.name}</div>
+                            <div style={{ color: '#6b7280', fontSize: 12 }}>{p.description?.slice(0, 60)}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 700 }}>#{p.productId || p._id?.slice(-6)}</div>
+                        <div style={{ color: '#9ca3af', fontSize: 12 }}>{new Date(p.createdAt || p._id?.timestamp * 1000 || Date.now()).toLocaleDateString()}</div>
+                      </td>
+                      <td>KES {(Number(p?.price) || 0).toLocaleString()}</td>
+                      <td>{p.stock || p.countInStock || 0}</td>
+                      <td>
+                        <span className={`admin-status ${p.stock > 0 ? 'admin-status-Active' : 'admin-status-Out'}`}>{p.stock > 0 ? 'Published' : 'Out Stock'}</span>
+                      </td>
+                      <td>
+                        <button className="admin-btn" onClick={() => handleEdit(p)}>Edit</button>
+                        <button className="admin-btn-secondary" onClick={() => handleDelete(p._id)} style={{ marginLeft: 8 }}>Delete</button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </section>
       </main>
     </div>

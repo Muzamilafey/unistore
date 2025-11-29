@@ -113,3 +113,24 @@
   gap: 16px; /* optional spacing between cards */
 }
 
+/* Desktop enhancements to match dashboard layout */
+.products-table-section .admin-search-bar { display:flex; align-items:center; gap:12px; margin-bottom:18px }
+.products-table-section .admin-search-input{flex:1;max-width:520px}
+.admin-table.products-table thead th{background:#fafafa;padding:14px 12px;border-bottom:1px solid #eef2f7}
+.admin-table.products-table tbody td{padding:14px 12px;vertical-align:middle;border-bottom:1px solid #f1f5f9}
+.admin-table.products-table tbody tr:hover{background:#fbfdff}
+.admin-table.products-table td img{width:48px;height:48px;border-radius:8px;object-fit:cover}
+.admin-table.products-table td .admin-sub{color:#6b7280;font-size:12px}
+
+/* status badge for out of stock */
+.admin-status-Out{background:#ef4444}
+
+/* make header cards similar to screenshot */
+.order-summary-card { min-width: 200px; padding: 18px 20px }
+.order-summary-card div:nth-child(2){font-size:1.6rem}
+
+@media(min-width:1000px){
+  .order-summary-card-whole{display:flex}
+  .admin-content{max-width:1200px}
+}
+
