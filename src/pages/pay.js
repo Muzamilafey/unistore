@@ -47,6 +47,7 @@ const Pay = () => {
       const payload = {
         amount: order.finalAmount || order.totalPrice,
         email: order.user?.email,
+        phone: order.shippingAddress?.phone || '',
         orderId: order._id,
       };
       const { data } = await api.post('/pesapal/initiate-payment', payload, config);
