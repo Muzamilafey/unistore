@@ -40,6 +40,11 @@ const OrdersPage = () => {
     return 'status-processing';
   };
 
+  const getPaymentStatusClass = (paymentStatus) => {
+    if (paymentStatus === 'Paid') return 'payment-status-paid';
+    return 'payment-status-unpaid';
+  };
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', { 
       year: 'numeric', 
@@ -78,6 +83,9 @@ const OrdersPage = () => {
               <div className="order-right-section">
                 <span className={`order-status ${getStatusClass(order.status)}`}>
                   {order.status}
+                </span>
+                <span className={`order-payment-status ${getPaymentStatusClass(order.paymentStatus || 'Unpaid')}`}>
+                  {order.paymentStatus || 'Unpaid'}
                 </span>
                 <div className="order-total">
                   <span className="total-label">Total</span>

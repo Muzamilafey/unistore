@@ -75,6 +75,14 @@ const AdminOrders = () => {
     }
   }
 
+  function getPaymentStatusColor(paymentStatus) {
+    switch (paymentStatus) {
+      case 'Paid': return '#4caf50';
+      case 'Unpaid': return '#ff9800';
+      default: return '#888';
+    }
+  }
+
   const filteredOrders = orders.filter(o =>
     (o.orderId || o._id).toLowerCase().includes(search.toLowerCase()) ||
     (o.user?.name || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -131,6 +139,7 @@ const AdminOrders = () => {
                 <th style={{ padding: '12px 8px' }}>Order ID</th>
                 <th style={{ padding: '12px 8px' }}>Customer</th>
                 <th style={{ padding: '12px 8px' }}>Status</th>
+                <th style={{ padding: '12px 8px' }}>Payment Status</th>
                 <th style={{ padding: '12px 8px' }}>Total</th>
                 <th style={{ padding: '12px 8px' }}>Actions</th>
               </tr>
@@ -144,6 +153,11 @@ const AdminOrders = () => {
                     <span className={`admin-status admin-status-${o.status}`}
                       style={{ color: getStatusColor(o.status), background: '#f5f5f5', padding: '4px 12px', borderRadius: 8, fontWeight: 600 }}>
                       {o.status}
+                    </span>
+                  </td>
+                  <td>
+                    <span style={{ color: getPaymentStatusColor(o.paymentStatus || 'Unpaid'), background: '#f5f5f5', padding: '4px 12px', borderRadius: 8, fontWeight: 600 }}>
+                      {o.paymentStatus || 'Unpaid'}
                     </span>
                   </td>
                   <td>KES {(Number(o?.totalPrice) || 0).toFixed(2)}</td>

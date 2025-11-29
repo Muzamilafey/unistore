@@ -78,6 +78,7 @@ const OrderConfirmation = () => {
         <div style={{ maxWidth: "600px", margin: "0 auto", border: "1px solid #ddd", padding: "1.5rem", borderRadius: "8px" }}>
           <p><strong>Order ID:</strong> {order._id}</p>
           <p><strong>Status:</strong> {order.status}</p>
+          <p><strong>Payment Status:</strong> <span style={{ fontWeight: 600, color: order.paymentStatus === 'Paid' ? '#4CAF50' : '#ff9800' }}>{order.paymentStatus || 'Unpaid'}</span></p>
           <p><strong>Total Amount:</strong> KES {order.finalAmount?.toFixed(2) || order.totalPrice?.toFixed(2)}</p>
           <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
           <p><strong>Delivery Address:</strong> {order.shippingAddress?.address}, {order.shippingAddress?.city}</p>
@@ -85,7 +86,7 @@ const OrderConfirmation = () => {
           <h3>Order Items</h3>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {order.orderItems?.map((item, idx) => (
-              <li key={idx} style={{ borderBottom: "1px solid #eee", padding: "0.5rem 0" }}>
+              <li key={idx} style={{ borderBottom: "1px solid #3d9494ff", padding: "0.5rem 0" }}>
                 <strong>{item.product?.name}</strong> x {item.qty} @ KES {item.price?.toFixed(2) || 0}
               </li>
             ))}
