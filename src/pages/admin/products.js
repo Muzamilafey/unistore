@@ -10,6 +10,13 @@ import autoTable from 'jspdf-autotable';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sort, setSort] = useState('newest');
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
@@ -24,18 +31,67 @@ const AdminProducts = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (opts = {}) => {
     try {
-      const { data } = await api.get("/products");
-      setProducts(data);
+      setLoading(true);
+      const q = new URLSearchParams();
+      q.set('page', opts.page || page);
+      q.set('limit', opts.limit || limit);
+      if ((opts.search || search).trim()) q.set('search', opts.search || search);
+      if ((opts.status || statusFilter) && (opts.status || statusFilter) !== 'all') q.set('status', opts.status || statusFilter);
+      if ((opts.sort || sort)) q.set('sort', opts.sort || sort);
+
+      // Prefer admin endpoint which supports pagination and filtering
+      const url = `/admin/products?${q.toString()}`;
+      const res = await api.get(url);
+
+      // Support two shapes: { products: [], total, pages } or []
+      const data = res.data;
+      if (Array.isArray(data)) {
+        setProducts(data);
+        setTotalCount(data.length);
+        setTotalPages(1);
+      } else if (data.products || data.docs) {
+        const docs = data.products || data.docs;
+        setProducts(docs);
+        setTotalCount(data.total || data.count || docs.length);
+        setTotalPages(data.pages || Math.ceil((data.total || docs.length) / (opts.limit || limit)));
+      } else {
+        // fallback
+        setProducts(data);
+        setTotalCount((data && data.length) || 0);
+        setTotalPages(1);
+      }
     } catch (err) {
+      console.error(err);
+      // fallback to public endpoint if admin endpoint not available
+      if (err?.response?.status === 404) {
+        try {
+          const { data } = await api.get('/products');
+          setProducts(data);
+          setTotalCount(data.length || 0);
+          setTotalPages(1);
+          setError('');
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
       setError("Failed to load products");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts({ page, limit });
   }, []);
+
+  // refetch when pagination or filters change
+  useEffect(() => {
+    const t = setTimeout(() => fetchProducts({ page, limit }), 250);
+    return () => clearTimeout(t);
+  }, [page, limit, search, statusFilter, sort]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -163,9 +219,13 @@ const AdminProducts = () => {
           </div>
             
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            
-            <button className="admin-btn-secondary" onClick={handleDownloadExcel}>Download Excel</button>
-            <button className="admin-btn-secondary" onClick={handleDownloadPDF}>Download PDF</button>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="admin-btn-primary" onClick={() => { clearForm(); setShowForm(true); }}>+ Add Product</button>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="admin-btn-secondary" onClick={handleDownloadExcel}>Download Excel</button>
+              <button className="admin-btn-secondary" onClick={handleDownloadPDF}>Download PDF</button>
+            </div>
           </div>
         </section>
         {showForm && (
@@ -242,15 +302,18 @@ const AdminProducts = () => {
         )}
         <section className="products-table-section">
           <div className="admin-search-bar">
-            <input className="admin-search-input" placeholder="Search by name, Product ID..." onChange={e => { /* TODO: implement search */ }} />
-            <select className="admin-filter-select">
+            <input className="admin-search-input" placeholder="Search by name, Product ID..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
+            <select className="admin-filter-select" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
               <option value="all">All Status</option>
               <option value="published">Published</option>
               <option value="out-of-stock">Out of Stock</option>
               <option value="draft">Draft</option>
             </select>
-            <select className="admin-filter-select">
-              <option>01 Jan,2024 to 31 Dec,2024</option>
+            <select className="admin-filter-select" value={sort} onChange={e => { setSort(e.target.value); setPage(1); }}>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="price-asc">Price: Low → High</option>
+              <option value="price-desc">Price: High → Low</option>
             </select>
           </div>
 
@@ -301,6 +364,23 @@ const AdminProducts = () => {
                 )}
               </tbody>
             </table>
+            {/* Pagination controls */}
+            <div className="admin-pagination" style={{ paddingTop: 12 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="admin-btn-secondary">Prev</button>
+                <div style={{ padding: '6px 12px', background: '#fff', border: '1px solid #e6eef6', borderRadius: 8 }}>Page {page} / {totalPages}</div>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="admin-btn-secondary">Next</button>
+                <select value={limit} onChange={e => { setLimit(Number(e.target.value)); setPage(1); }} style={{ marginLeft: 12, padding: 8, borderRadius: 8 }}>
+                  <option value={5}>5 / page</option>
+                  <option value={10}>10 / page</option>
+                  <option value={20}>20 / page</option>
+                  <option value={50}>50 / page</option>
+                </select>
+              </div>
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+                <div style={{ color: '#6b7280', alignSelf: 'center' }}>{totalCount} products</div>
+              </div>
+            </div>
           </div>
         </section>
       </main>
