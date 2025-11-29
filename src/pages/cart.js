@@ -13,29 +13,24 @@ const CartPage = () => {
     0
   );
 
+  const shipping = cartItems.length ? 49 : 0; // simple placeholder shipping
+  const totalAmount = totalPrice + shipping;
+
   const handleProceed = () => {
     navigate('/checkout');
   };
 
+  const changeQty = (product, delta) => {
+    // addToCart expects (product, qtyDelta)
+    addToCart(product, delta);
+  };
 
   if (cartItems.length === 0) {
     return (
       <div className="empty-cart">
         🛒 Your cart is empty.<br />
         <button
-          style={{
-            marginTop: 20,
-            background: 'linear-gradient(90deg, #1f4068 0%, #00e0ff 100%)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '10px 24px',
-            fontWeight: 600,
-            fontSize: '1.1rem',
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(33,150,243,0.10)',
-            transition: 'background 0.2s, transform 0.2s'
-          }}
+          className="back-home"
           onClick={() => navigate('/')}
         >
           ⬅️ Back to Home
@@ -45,60 +40,45 @@ const CartPage = () => {
   }
 
   return (
-    <div className="cart-container">
-      <h2>Your Cart</h2>
+    <div className="cart-page-shell">
+      <header className="cart-header">
+        <button className="back" onClick={() => navigate(-1)}>←</button>
+        <h3>My Cart</h3>
+        <button className="more">⋯</button>
+      </header>
 
-      <div className="cart-items">
-        {cartItems.map(({ product, qty }) => (
-          <div key={product?._id || Math.random()} className="cart-item">
-            <img src={product.image || product.images?.[0]?.url || ''} alt={product?.name || 'Product'} />
-            <div className="item-info">
-              <h4>{product.name}</h4>
-              <p>KES{(Number(product?.price) || 0).toFixed(2)}</p>
-              <div className="qty-control">
-                <input
-                  type="number"
-                  min="1"
-                  max={product.stock}
-                  value={qty}
-                  onChange={e => addToCart(product, Number(e.target.value) - qty)}
-                />
-                <button
-                  className="remove-btn"
-                  onClick={() => removeFromCart(product._id)}
-                >
-                  Remove
-                </button>
+      <main className="cart-container">
+        <div className="cart-items">
+          {cartItems.map(({ product, qty }) => (
+            <div key={product?._id || Math.random()} className="cart-item-card">
+              <img src={product.image || product.images?.[0]?.url || ''} alt={product?.name || 'Product'} />
+              <div className="card-info">
+                <div className="card-top">
+                  <h4 className="product-title">{product.name}</h4>
+                  <div className="price-pill">{(Number(product?.price) || 0).toLocaleString()}</div>
+                </div>
+                <div className="card-bottom">
+                  <div className="qty-controls">
+                    <button className="qty-btn" onClick={() => changeQty(product, -1)} disabled={qty <= 1}>−</button>
+                    <div className="qty-number">{qty}</div>
+                    <button className="qty-btn" onClick={() => changeQty(product, 1)} disabled={product.stock && qty >= product.stock}>+</button>
+                  </div>
+                  <button className="remove-small" onClick={() => removeFromCart(product._id)}>···</button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </main>
 
-      <div className="cart-summary">
-  <h3>Total: ${(Number(totalPrice) || 0).toFixed(2)}</h3>
-        <button className="checkout-btn" onClick={handleProceed}>
-          Proceed to Checkout
-        </button>
-        <button
-          style={{
-            marginTop: 16,
-            background: 'linear-gradient(90deg, #1f4068 0%, #00e0ff 100%)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '10px 24px',
-            fontWeight: 600,
-            fontSize: '1.1rem',
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(33,150,243,0.10)',
-            transition: 'background 0.2s, transform 0.2s'
-          }}
-          onClick={() => navigate('/')}
-        >
-          ⬅️ Back to Home
-        </button>
-      </div>
+      <footer className="cart-footer">
+        <div className="totals">
+          <div className="tot-row"><span>Sub Total</span><span>KES {Number(totalPrice).toLocaleString()}</span></div>
+          <div className="tot-row"><span>Shipping</span><span>KES {Number(shipping).toLocaleString()}</span></div>
+          <div className="tot-row total-amount"><strong>Total Amount</strong><strong>KES {Number(totalAmount).toLocaleString()}</strong></div>
+        </div>
+        <button className="checkout-action" onClick={handleProceed}>Checkout</button>
+      </footer>
     </div>
   );
 };
