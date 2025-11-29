@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import api from '../utils/api';
 
 const Inbox = () => {
   const { user, token } = useContext(AuthContext);
@@ -16,18 +17,12 @@ const Inbox = () => {
   const fetchReminders = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/reminders/all`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error('Failed to fetch reminders');
-      const data = await res.json();
-      setReminders(data);
+      const { data } = await api.get('/orders/reminders/all');
+      setReminders(Array.isArray(data) ? data : []);
       setError('');
     } catch (err) {
-      setError(err.message);
+      const msg = err.response?.data?.message || err.message || 'Failed to fetch reminders';
+      setError(msg);
       console.error('Error fetching reminders:', err);
     } finally {
       setLoading(false);
@@ -38,26 +33,13 @@ const Inbox = () => {
     if (reminder.read) return; // Already read
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/reminders/mark-read`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          orderId: reminder.orderId,
-          reminderId: reminder._id,
-        }),
+      await api.put('/orders/reminders/mark-read', {
+        orderId: reminder.orderId,
+        reminderId: reminder._id,
       });
 
-      if (!res.ok) throw new Error('Failed to mark as read');
-
       // Update local state
-      setReminders((prev) =>
-        prev.map((r) =>
-          r._id === reminder._id ? { ...r, read: true } : r
-        )
-      );
+      setReminders((prev) => prev.map((r) => (r._id === reminder._id ? { ...r, read: true } : r)));
     } catch (err) {
       console.error('Error marking reminder as read:', err);
     }
