@@ -3,6 +3,25 @@
 .products-filters { display:flex; gap:12px; margin-bottom:20px }
 .products-search { flex:1; padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:14px }
 .products-category-select { padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:14px }
+
+/* Category pills */
+.category-pills-wrapper { margin: 12px 0 8px; }
+.category-pills { display:flex; gap:10px; align-items:center; padding:6px 8px; overflow-x:auto; }
+.category-pill {
+	display:inline-block;
+	padding:8px 14px;
+	border-radius:999px;
+	background: #fff8f1;
+	border: 1px solid rgba(249, 225, 210, 0.9);
+	color: #111827;
+	font-weight:700;
+	font-size:13px;
+	text-decoration:none;
+	box-shadow: 0 2px 6px rgba(15,23,36,0.03);
+	white-space:nowrap;
+}
+.category-pill:hover { transform: translateY(-2px); transition: transform 120ms ease; }
+
 .products-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:14px }
 
 @media (max-width:768px) { .products-filters{flex-direction:column} }

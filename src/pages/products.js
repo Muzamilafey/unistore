@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
+import { Link } from 'react-router-dom';
 import ProductCard from '../components/product/ProductCard';
 import './products.css';
 
@@ -44,6 +45,21 @@ const ProductsPage = () => {
     <div className="products-page">
       <div className="products-page-inner">
         <h2>All Products</h2>
+
+        <div className="category-pills-wrapper">
+          <div className="category-pills">
+            {categories.map((cat) => (
+              <Link
+                key={cat}
+                to={`/category/${encodeURIComponent(cat)}`}
+                className="category-pill"
+                onClick={() => setCategory(cat)}
+              >
+                {cat}
+              </Link>
+            ))}
+          </div>
+        </div>
 
         <div className="products-filters">
           <input
