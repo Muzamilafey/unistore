@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AdminNavbar from './AdminSidebar';
 import api from '../../utils/api';
 import AppLockModal from '../../components/admin/AppLockModal';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import './AdminDashboard.css';
 import './transactions.css';
 
@@ -13,6 +14,11 @@ const AdminTransactions = () => {
   const [showLockModal, setShowLockModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [lockStatus, setLockStatus] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedTxId, setSelectedTxId] = useState(null);
+  const [lastDeletedTx, setLastDeletedTx] = useState(null);
+  const [undoTimeoutId, setUndoTimeoutId] = useState(null);
+  const [showTrash, setShowTrash] = useState(false);
 
   useEffect(() => {
     checkAppLockStatus();
@@ -51,15 +57,70 @@ const AdminTransactions = () => {
     fetchTransactions();
   };
 
-  const handleDelete = async (txId) => {
-    const ok = window.confirm('Delete this transaction? This action cannot be undone.');
-    if (!ok) return;
+  const handleDeleteConfirm = (txId) => {
+    setSelectedTxId(txId);
+    setConfirmOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedTxId) return;
     try {
-      await api.delete(`/admin/transactions/${txId}`);
-      setTransactions(prev => prev.filter(t => t._id !== txId));
+      await api.delete(`/admin/transactions/${selectedTxId}`);
+      // remove from current list
+      setTransactions(prev => prev.filter(t => t._id !== selectedTxId));
+      // set lastDeletedTx for undo
+      const deleted = transactions.find(t => t._id === selectedTxId);
+      setLastDeletedTx(deleted || { _id: selectedTxId });
+      // set undo timer (8s)
+      const id = setTimeout(() => setLastDeletedTx(null), 8000);
+      setUndoTimeoutId(id);
     } catch (err) {
       console.error('Failed to delete transaction', err);
       alert('Failed to delete transaction.');
+    } finally {
+      setConfirmOpen(false);
+      setSelectedTxId(null);
+    }
+  };
+
+  const handleUndo = async () => {
+    if (!lastDeletedTx) return;
+    try {
+      await api.put(`/admin/transactions/${lastDeletedTx._id}/restore`);
+      // re-fetch transactions to get updated list
+      fetchTransactions();
+      setLastDeletedTx(null);
+      if (undoTimeoutId) clearTimeout(undoTimeoutId);
+    } catch (err) {
+      console.error('Failed to restore transaction', err);
+      alert('Failed to restore.');
+    }
+  };
+
+  const handleViewTrash = async () => {
+    setShowTrash(!showTrash);
+    if (!showTrash) {
+      // load trashed
+      try {
+        const { data } = await api.get('/admin/transactions/trash');
+        setTransactions(data);
+      } catch (err) {
+        console.error('Failed to load trash', err);
+        setError('Failed to load trash');
+      }
+    } else {
+      fetchTransactions();
+    }
+  };
+
+  const handlePermanentDelete = async (txId) => {
+    if (!window.confirm('Permanently delete this transaction? This cannot be undone.')) return;
+    try {
+      await api.delete(`/admin/transactions/${txId}/permanent`);
+      setTransactions(prev => prev.filter(t => t._id !== txId));
+    } catch (err) {
+      console.error('Failed to permanently delete', err);
+      alert('Failed to permanently delete');
     }
   };
 
@@ -96,8 +157,13 @@ const AdminTransactions = () => {
         <h2 className="admin-page-title">Transactions</h2>
 
         <div className="transactions-top">
-          <div className="transactions-search">
-            <input type="text" placeholder="Search by id, customer, email or phone" value={search} onChange={e => setSearch(e.target.value)} />
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', width: '100%' }}>
+            <div className="transactions-search">
+              <input type="text" placeholder="Search by id, customer, email or phone" value={search} onChange={e => setSearch(e.target.value)} />
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="admin-btn" onClick={handleViewTrash}>{showTrash ? 'Back to Transactions' : 'View Trash'}</button>
+            </div>
           </div>
         </div>
 
@@ -138,13 +204,32 @@ const AdminTransactions = () => {
                   </td>
                   <td>{new Date(tx.createdAt).toLocaleString()}</td>
                   <td>
-                    <button className="tx-delete-btn" onClick={() => handleDelete(tx._id)}>Delete</button>
+                    {!showTrash ? (
+                      <button className="tx-delete-btn" onClick={() => handleDeleteConfirm(tx._id)}>Delete</button>
+                    ) : (
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button className="admin-btn" onClick={() => {
+                          // restore
+                          api.put(`/admin/transactions/${tx._id}/restore`).then(() => setTransactions(prev => prev.filter(p => p._id !== tx._id))).catch(err => { console.error(err); alert('Failed to restore'); });
+                        }}>Restore</button>
+                        <button className="tx-delete-btn" onClick={() => handlePermanentDelete(tx._id)}>Delete Permanently</button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        {lastDeletedTx && (
+          <div style={{ position: 'fixed', right: 20, bottom: 20, background: '#111827', color: '#fff', padding: 12, borderRadius: 10, display: 'flex', gap: 12, alignItems: 'center', zIndex: 9999 }}>
+            <div>Transaction deleted</div>
+            <button onClick={handleUndo} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '8px 10px', borderRadius: 8, fontWeight: 700 }}>Undo</button>
+            <button onClick={() => setLastDeletedTx(null)} style={{ background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.12)', padding: '8px 10px', borderRadius: 8 }}>Dismiss</button>
+          </div>
+        )}
+
+        <ConfirmModal isOpen={confirmOpen} title="Delete Transaction" message="Delete this transaction? It will be moved to trash and can be restored later." onCancel={() => setConfirmOpen(false)} onConfirm={handleDelete} />
       </main>
     </div>
   );
