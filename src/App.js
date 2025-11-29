@@ -112,6 +112,7 @@ function App() {
 
               {/* private routes */}
               <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+              <Route path="/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
               <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
               <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
               <Route path="/pay" element={<PrivateRoute><PayPage /></PrivateRoute>} />
