@@ -49,7 +49,17 @@ const AdminAppLock = () => {
     }
 
     try {
-      await api.post('/admin/applock/set-pin', { pin });
+      // If changing existing PIN, prompt for current PIN
+      let previousPin = undefined;
+      if (lockStatus?.hasPin) {
+        previousPin = window.prompt('Enter your current PIN to confirm change');
+        if (!previousPin) {
+          setError('Current PIN required to change PIN');
+          return;
+        }
+      }
+
+      await api.post('/admin/applock/set-pin', { pin, previousPin });
       setSuccess('PIN set successfully!');
       setPin('');
       setConfirmPin('');
@@ -62,11 +72,21 @@ const AdminAppLock = () => {
 
   const handleToggleAppLock = async (enabled) => {
     try {
-      await api.put('/admin/applock/toggle', { isEnabled: enabled });
+      let body = { isEnabled: enabled };
+      // if we're disabling, require current PIN confirmation
+      if (!enabled) {
+        const current = window.prompt('Enter current PIN to disable app lock');
+        if (!current) {
+          setError('Current PIN required to disable lock');
+          return;
+        }
+        body.previousPin = current;
+      }
+      await api.put('/admin/applock/toggle', body);
       fetchLockStatus();
       setSuccess(`App lock ${enabled ? 'enabled' : 'disabled'} successfully!`);
     } catch (err) {
-      setError('Failed to toggle app lock');
+      setError(err.response?.data?.message || 'Failed to toggle app lock');
     }
   };
 
