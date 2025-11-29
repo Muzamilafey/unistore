@@ -3,6 +3,7 @@ import Hero from "../components/Hero/Hero";
 import DiscountedCarousel from "../components/Carousel/DiscountedCarousel";
 import FeaturedCarousel from "../components/Carousel/FeaturedCarousel";
 import FeaturedCategories from "../components/Featured/FeaturedCategories";
+import ApiDebug from "../components/Debug/ApiDebug";
 import TrustBadges from "../components/Trust/TrustBadges";
 import DealBannerCarousel from "../components/deals/DealBannerCarousel";
 import DealsList from "../components/deals/DealsList";
@@ -12,6 +13,8 @@ import "./index.css";
 const HomePage = () => {
   return (
     <div className="products-section">
+      {/* DEBUG: show API response to help diagnose deployment issues */}
+      <ApiDebug />
       <div className="hero-carousel-wrapper">
         <DiscountedCarousel />
       </div>
