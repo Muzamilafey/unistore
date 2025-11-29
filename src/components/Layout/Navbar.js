@@ -4,8 +4,7 @@ import './Navbar.css';
 import { AuthContext } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
 import api from '../../utils/api';
-import { FaShoppingCart } from 'react-icons/fa';
-import { FaRegMessage } from 'react-icons/fa6';
+import { FaShoppingCart, FaRegCommentDots } from 'react-icons/fa';
 
 const Navbar = () => {
   const { user, logout, token } = useContext(AuthContext);
@@ -149,7 +148,7 @@ const Navbar = () => {
         {/* Inbox with notification */}
         {user && (
           <Link to="/inbox" className="nav-inbox" title="Inbox">
-            <FaRegMessage size={20} />
+            <FaRegCommentDots size={20} />
             {unreadCount > 0 && (
               <span className="inbox-notification-badge">{unreadCount}</span>
             )}
