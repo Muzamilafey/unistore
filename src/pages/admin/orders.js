@@ -39,6 +39,29 @@ const AdminOrders = () => {
     }
   };
 
+  const handleSendReminder = async (orderId) => {
+    if (!confirm('Send payment reminder to customer?')) return;
+    try {
+      await api.post(`/orders/${orderId}/send-payment-reminder`);
+      alert('Payment reminder sent');
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to send reminder');
+    }
+  };
+
+  const handleMarkPaid = async (orderId) => {
+    if (!confirm('Mark this order as PAID? This will adjust stock and create a transaction record.')) return;
+    try {
+      await api.put(`/orders/${orderId}/payment-status`, { paymentStatus: 'Paid' });
+      fetchOrders();
+      alert('Order marked as Paid');
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to mark paid');
+    }
+  };
+
   const handleDownloadExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(orders);
     const workbook = XLSX.utils.book_new();
@@ -179,6 +202,16 @@ const AdminOrders = () => {
                     <Link to={`/admin/orders/${o._id}`}>
                       <button className="admin-btn-primary">View</button>
                     </Link>
+                    { (o.paymentStatus || 'Unpaid') !== 'Paid' && (
+                      <>
+                        <button className="admin-btn-secondary" onClick={() => handleSendReminder(o._id)}>
+                          Send Reminder
+                        </button>
+                        <button className="admin-btn-primary" onClick={() => handleMarkPaid(o._id)}>
+                          Mark Paid
+                        </button>
+                      </>
+                    )}
                     {/* Delete Button */}
                     <button
                       className="admin-btn-danger"
