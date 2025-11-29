@@ -4,7 +4,7 @@ import { CartContext } from "../context/CartContext";
 import api from "../utils/api";
 import "./Payment.css";
 
-const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponCode = null }) => {
+const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponCode = null, shippingFee = 0 }) => {
   const { cartItems, clearCart } = useContext(CartContext);
   const [paymentMethod, setPaymentMethod] = useState("Pay on Delivery");
   const [message, setMessage] = useState("");
@@ -35,7 +35,8 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       ? discount.value
       : 0;
 
-  const finalAmount = totalPrice - discountAmount;
+  // Total = subtotal - discount + shipping fee
+  const finalAmount = totalPrice - discountAmount + shippingFee;
 
   // Pesapal maximum allowed amount (frontend-configurable)
   const pesapalMax = Number(process.env.REACT_APP_PESAPAL_MAX_AMOUNT || 5000);
@@ -67,6 +68,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
         totalPrice,
         discount: discount,
         couponCode: couponCode,
+        shippingFee,
         finalAmount,
       };
 
@@ -141,6 +143,9 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
             Discount ({discount.type === "percent" ? `${discount.value}%` : `KES ${discount.value}`}):
             <strong> -KES {discountAmount.toFixed(2)}</strong>
           </p>
+        )}
+        {shippingFee > 0 && (
+          <p>Shipping Fee: <strong>+KES {shippingFee.toFixed(2)}</strong></p>
         )}
         <p className="total-pay">
           Total Payable: <strong>KES {finalAmount.toFixed(2)}</strong>

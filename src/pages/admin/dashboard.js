@@ -3,6 +3,7 @@ import './AdminDashboard.css';
 import api from '../../utils/api';
 import AdminNavbar from './AdminSidebar';
 import CategoryModal from '../../components/admin/CategoryModal';
+import ShippingFeeModal from '../../components/admin/ShippingFeeModal';
 import { Line, Doughnut } from 'react-chartjs-2';
 import { Chart, LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import jsPDF from 'jspdf';
@@ -24,6 +25,7 @@ const DashboardPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showCategories, setShowCategories] = useState(false);
+  const [showShippingFee, setShowShippingFee] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -224,6 +226,7 @@ const DashboardPage = () => {
               <div className="panel-header">
                 <h3>Recent Orders</h3>
                 <div className="panel-controls" style={{ display: 'flex', gap: 12 }}>
+                  <button onClick={() => setShowShippingFee(true)} className="see-all" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', textDecoration: 'underline' }}>Manage Shipping Fee</button>
                   <button onClick={() => setShowCategories(true)} className="see-all" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', textDecoration: 'underline' }}>Manage Categories</button>
                   <a href="#" className="see-all">See All</a>
                 </div>
@@ -272,6 +275,7 @@ const DashboardPage = () => {
         )}
       </main>
       {showCategories && <CategoryModal onClose={() => setShowCategories(false)} onCreated={() => {}} />}
+      {showShippingFee && <ShippingFeeModal onClose={() => setShowShippingFee(false)} onUpdated={() => {}} />}
     </div>
   );
 };

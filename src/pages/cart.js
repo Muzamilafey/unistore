@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './cart.css';
 
 const CartPage = () => {
-  const { cartItems, removeFromCart, addToCart } = useContext(CartContext);
+  const { cartItems, removeFromCart, addToCart, shippingFee } = useContext(CartContext);
   const navigate = useNavigate();
 
   const totalPrice = cartItems.reduce(
@@ -13,7 +13,7 @@ const CartPage = () => {
     0
   );
 
-  const shipping = cartItems.length ? 49 : 0; // simple placeholder shipping
+  const shipping = cartItems.length ? shippingFee : 0; // use shipping fee from context
   const totalAmount = totalPrice + shipping;
 
   const handleProceed = () => {

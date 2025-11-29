@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import api from '../utils/api';
 
 export const CartContext = createContext();
 
@@ -8,9 +9,25 @@ export const CartProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [shippingFee, setShippingFee] = useState(0);
+
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
+
+  // Fetch shipping fee on mount
+  useEffect(() => {
+    const fetchShippingFee = async () => {
+      try {
+        const { data } = await api.get('/admin/shipping-fees');
+        setShippingFee(data.amount || 0);
+      } catch (err) {
+        console.error('Failed to fetch shipping fee:', err);
+        setShippingFee(0);
+      }
+    };
+    fetchShippingFee();
+  }, []);
 
   const addToCart = (product, qty) => {
     setCartItems(prev => {
@@ -36,7 +53,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart, shippingFee }}>
       {children}
     </CartContext.Provider>
   );

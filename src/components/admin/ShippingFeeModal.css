@@ -1,0 +1,113 @@
+/* Shipping Fee Modal Styles */
+.shipping-fee-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 400px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.shipping-fee-modal h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.shipping-fee-modal .form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.shipping-fee-modal .form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.shipping-fee-modal .form-group input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.shipping-fee-modal .form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.shipping-fee-modal .error-message {
+  color: #dc2626;
+  background-color: #fee2e2;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.shipping-fee-modal .success-message {
+  color: #059669;
+  background-color: #d1fae5;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.shipping-fee-modal .modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
+.shipping-fee-modal .btn-save,
+.shipping-fee-modal .btn-cancel {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.shipping-fee-modal .btn-save {
+  background: linear-gradient(135deg, #3b82f6, #1f4068);
+  color: #fff;
+}
+
+.shipping-fee-modal .btn-save:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #172a4a);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.shipping-fee-modal .btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.shipping-fee-modal .btn-cancel {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.shipping-fee-modal .btn-cancel:hover {
+  background-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .shipping-fee-modal {
+    min-width: 90vw;
+    max-width: 90vw;
+  }
+}

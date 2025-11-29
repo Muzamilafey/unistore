@@ -6,14 +6,14 @@ import api from "../utils/api";
 import "./checkout.css";
 
 const Checkout = () => {
-  const { cartItems } = useContext(CartContext);
+  const { cartItems, shippingFee } = useContext(CartContext);
   const [shippingData, setShippingData] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState({ type: "percent", value: 0 });
   const [couponError, setCouponError] = useState("");
   const [couponSuccess, setCouponSuccess] = useState("");
 
-  // Cart subtotal
+  // Cart subtotal (before shipping & discount)
   const totalPrice = cartItems.reduce((a, c) => a + c.product.price * c.qty, 0);
 
   const handleShippingSubmit = (data) => {
@@ -95,6 +95,7 @@ const Checkout = () => {
             shippingAddress={shippingData}
             discount={discount}
             totalPrice={totalPrice} // pass subtotal for fixed discount calculations
+            shippingFee={shippingFee}
           />
         </div>
       )}
