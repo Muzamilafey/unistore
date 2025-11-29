@@ -51,6 +51,18 @@ const AdminTransactions = () => {
     fetchTransactions();
   };
 
+  const handleDelete = async (txId) => {
+    const ok = window.confirm('Delete this transaction? This action cannot be undone.');
+    if (!ok) return;
+    try {
+      await api.delete(`/admin/transactions/${txId}`);
+      setTransactions(prev => prev.filter(t => t._id !== txId));
+    } catch (err) {
+      console.error('Failed to delete transaction', err);
+      alert('Failed to delete transaction.');
+    }
+  };
+
   const filtered = transactions.filter(t =>
     (t._id || '').toLowerCase().includes(search.toLowerCase()) ||
     (t.user?.name || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -108,6 +120,7 @@ const AdminTransactions = () => {
                 <th>Amount</th>
                 <th>Status</th>
                 <th>Date</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -124,6 +137,9 @@ const AdminTransactions = () => {
                     </span>
                   </td>
                   <td>{new Date(tx.createdAt).toLocaleString()}</td>
+                  <td>
+                    <button className="tx-delete-btn" onClick={() => handleDelete(tx._id)}>Delete</button>
+                  </td>
                 </tr>
               ))}
             </tbody>

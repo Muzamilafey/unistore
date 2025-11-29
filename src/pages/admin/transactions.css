@@ -22,6 +22,20 @@
 .tx-status.pending { background:#fef3c7; color:#92400e }
 .tx-status.failed { background:#fee2e2; color:#991b1b }
 
+.tx-delete-btn {
+  background: linear-gradient(90deg,#ef4444,#f97316);
+  color: #fff;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight:700;
+  font-size:0.9rem;
+  box-shadow: 0 6px 18px rgba(239,68,68,0.12);
+}
+.tx-delete-btn:hover { transform: translateY(-2px); opacity:0.95 }
+
+
 @media (max-width:900px){
   .transactions-top { flex-direction:column; align-items:stretch }
   .transactions-card-wrap { flex-direction:column }
