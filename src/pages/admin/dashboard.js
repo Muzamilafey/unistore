@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './AdminDashboard.css';
 import api from '../../utils/api';
+import AdminNavbar from './AdminSidebar';
 import { Line, Doughnut } from 'react-chartjs-2';
 import { Chart, LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import jsPDF from 'jspdf';
@@ -130,6 +131,7 @@ const DashboardPage = () => {
 
   return (
     <div className="admin-dashboard-page">
+      <AdminNavbar />
       <header className="admin-header">
         <div className="admin-header-inner">
           <h1 className="admin-title">Admin Dashboard</h1>
