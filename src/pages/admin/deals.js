@@ -92,8 +92,14 @@ const AdminDeals = () => {
         </section>
 
         {showForm && (
-          <div style={{ background: '#f9f9f9', padding: 24, borderRadius: 12, marginBottom: 32 }}>
-            <DealForm deal={editingDeal} onSave={handleSaveDeal} />
+          <div className="modal-overlay" onClick={(e) => { if (e.target.className && e.target.className.includes('modal-overlay')) { setShowForm(false); setEditingDeal(null); } }}>
+            <div className="admin-form">
+              <h2 style={{ marginTop: 0 }}>{editingDeal ? 'Edit Deal' : 'Create Deal'}</h2>
+              <DealForm deal={editingDeal} onSave={handleSaveDeal} />
+              <div style={{ marginTop: 12, textAlign: 'right' }}>
+                <button className="admin-btn" onClick={() => { setShowForm(false); setEditingDeal(null); }}>Close</button>
+              </div>
+            </div>
           </div>
         )}
 
