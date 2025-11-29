@@ -10,7 +10,8 @@ const AddProductForm = ({ product = null, onDone = () => {} }) => {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [stock, setStock] = useState(0);
++  const [stock, setStock] = useState(0);
++  const [categories, setCategories] = useState([]);
   const [images, setImages] = useState([]); // new File objects to upload
   const [existingImages, setExistingImages] = useState([]); // existing image URLs (when editing)
   const [previews, setPreviews] = useState([]); // previews for new files: {file, url}
@@ -37,6 +38,27 @@ const AddProductForm = ({ product = null, onDone = () => {} }) => {
       if (product.image && typeof product.image === 'string') urls.push(product.image);
       setExistingImages(urls);
     }
+
+    // fetch admin categories (prefer admin-managed list, fallback to product distinct categories)
+    let mounted = true;
+    const loadCats = async () => {
+      try {
+        const { data } = await axios.get('/admin/categories');
+        if (mounted) setCategories((data || []).map(c => c.name));
+        return;
+      } catch (e) {
+        // fallback
+      }
+      try {
+        const { data } = await axios.get('/products/categories');
+        if (mounted) setCategories(data || []);
+      } catch (err) {
+        console.error('Failed to load categories', err);
+      }
+    };
+    loadCats();
+
+    return () => { mounted = false; };
   }, [product]);
 
   const handleFileChange = (e) => {
@@ -127,7 +149,14 @@ const AddProductForm = ({ product = null, onDone = () => {} }) => {
       </div>
       <div>
         <label className="admin-input-label">Category</label>
-        <input value={category} onChange={(e) => setCategory(e.target.value)} />
+        {categories && categories.length > 0 ? (
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="admin-input">
+            <option value="">-- Select category --</option>
+            {categories.map((c, i) => <option key={i} value={c}>{c}</option>)}
+          </select>
+        ) : (
+          <input value={category} onChange={(e) => setCategory(e.target.value)} />
+        )}
       </div>
       <div>
         <label className="admin-input-label">Stock</label>

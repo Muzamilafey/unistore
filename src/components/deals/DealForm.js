@@ -109,11 +109,13 @@ const DealForm = ({ deal, onSave }) => {
 
           {showDropdown && (
             <div className="product-list" role="listbox">
-              {products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())).slice(0, 50).map(p => (
+              {products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())).slice(0, 50).map(p => {
+                const imgUrl = p.image || (p.images && (Array.isArray(p.images) && (p.images[0]?.url || p.images[0])));
+                return (
                 <label key={p._id} className="product-item">
                   <input type="checkbox" checked={form.productIds.includes(p._id)} onChange={() => toggleProduct(p._id)} />
-                  {p.image || (p.images && p.images[0]) ? (
-                    <img src={p.image || p.images[0]} alt={p.name} />
+                  {imgUrl ? (
+                    <img src={imgUrl} alt={p.name} />
                   ) : (
                     <div className="thumb-placeholder">📦</div>
                   )}
@@ -122,7 +124,7 @@ const DealForm = ({ deal, onSave }) => {
                     <div className="product-sub">Ksh {Number(p.price || 0).toLocaleString()}</div>
                   </div>
                 </label>
-              ))}
+              )})}
               {products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())).length === 0 && (
                 <div className="no-results">No products match.</div>
               )}

@@ -1,0 +1,5 @@
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:1200}
+.category-modal{background:#fff;padding:20px;border-radius:8px;min-width:360px;box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+.category-list{max-height:220px;overflow:auto;border-top:1px solid #f0f3f6;padding-top:8px}
+.category-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #f1f5f9}
+.category-row .small{background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer}

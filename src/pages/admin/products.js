@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../utils/api";
 import AdminNavbar from './AdminSidebar';
 import AddProductForm from '../../components/admin/AddProductForm';
+import CategoryModal from '../../components/admin/CategoryModal';
 import './AdminDashboard.css';
 import './products.css';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +34,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showCategories, setShowCategories] = useState(false);
 
   const fetchProducts = async (opts = {}) => {
     try {
@@ -224,6 +226,7 @@ const AdminProducts = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="admin-btn-primary" onClick={() => { clearForm(); setShowForm(true); }}>+ Add Product</button>
+              <button className="admin-btn-secondary" onClick={() => setShowCategories(true)}>Manage Categories</button>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="admin-btn-secondary" onClick={handleDownloadExcel}>Download Excel</button>
@@ -243,6 +246,9 @@ const AdminProducts = () => {
               </div>
             </div>
           </div>
+        )}
+        {showCategories && (
+          <CategoryModal onClose={() => setShowCategories(false)} onCreated={() => { fetchProducts(); /* refresh categories in form next open */ }} />
         )}
         <section className="products-table-section">
           <div className="admin-search-bar">
