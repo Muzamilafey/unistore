@@ -26,8 +26,8 @@ const AdminNavbar = () => {
         <div className="admin-navbar-brand">
           <span className="brand-icon"><FaGem /></span>
           <div className="brand-text">
-            <div className="admin-navbar-title">MANWELL</div>
-            <div className="admin-navbar-sub">Control Panel</div>
+            <div className="admin-navbar-title"></div>
+            <div className="admin-navbar-sub"></div>
           </div>
         </div>
       </div>
