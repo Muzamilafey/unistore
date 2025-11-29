@@ -102,7 +102,7 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
       } else {
         setMessage("✅ Order placed successfully (Pay on Delivery).");
         clearCart();
-        setTimeout(() => navigate("/"), 50000);
+        setTimeout(() => navigate("/"), 2000);
       }
     } catch (err) {
       console.error("Payment error:", err);
