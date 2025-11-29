@@ -939,16 +939,17 @@ body, html {
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  padding: 20px;
+  padding: 10px; /* reduce outer gutter so modal can use more width */
 }
 .modal-overlay .admin-form {
-  max-width: 720px;
+  max-width: 960px; /* wider modal to reduce large side whitespace */
   width: 100%;
   margin: 0;
   box-shadow: 0 18px 50px rgba(2,6,23,0.5);
   max-height: 90vh;
   overflow-y: auto;
   border-radius: 12px;
+  padding: 18px; /* ensure modal content has comfortable inner spacing */
 }
 
 /* small export/print buttons adjustments */
