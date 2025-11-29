@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './AdminDashboard.css';
-import { FaBars, FaTimes, FaHeadset, FaBell, FaSearch, FaUserCircle } from 'react-icons/fa';
+import { FaBars, FaTimes, FaHeadset } from 'react-icons/fa';
 
 const adminNavLinks = [
   { label: 'Dashboard', to: '/admin/dashboard' },
@@ -44,26 +44,7 @@ const AdminNavbar = () => {
           ))}
         </ul>
 
-        <div className="admin-navbar-center desktop-only">
-          <div className="nav-search">
-            <FaSearch className="search-icon" />
-            <input className="nav-search-input" placeholder="Search products, orders..." />
-          </div>
-        </div>
-
         <div className="admin-navbar-right">
-          <div className="nav-actions desktop-only">
-            <button className="icon-btn" aria-label="notifications">
-              <FaBell />
-              <span className="notif-dot" />
-            </button>
-
-            <button className="profile-btn">
-              <FaUserCircle className="profile-icon" />
-              <span className="profile-name">Admin</span>
-            </button>
-          </div>
-
           {/* Mobile toggle */}
           <div className="mobile-only toggle-wrapper">
             <button
