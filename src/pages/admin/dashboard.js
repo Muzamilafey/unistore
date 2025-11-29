@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './AdminDashboard.css';
 import api from '../../utils/api';
 import AdminNavbar from './AdminSidebar';
+import CategoryModal from '../../components/admin/CategoryModal';
 import { Line, Doughnut } from 'react-chartjs-2';
 import { Chart, LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import jsPDF from 'jspdf';
@@ -22,6 +23,7 @@ const DashboardPage = () => {
   const [recent, setRecent] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showCategories, setShowCategories] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -221,7 +223,8 @@ const DashboardPage = () => {
             <section className="recent-orders card-panel">
               <div className="panel-header">
                 <h3>Recent Orders</h3>
-                <div className="panel-controls">
+                <div className="panel-controls" style={{ display: 'flex', gap: 12 }}>
+                  <button onClick={() => setShowCategories(true)} className="see-all" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4f46e5', textDecoration: 'underline' }}>Manage Categories</button>
                   <a href="#" className="see-all">See All</a>
                 </div>
               </div>
@@ -268,6 +271,7 @@ const DashboardPage = () => {
           </>
         )}
       </main>
+      {showCategories && <CategoryModal onClose={() => setShowCategories(false)} onCreated={() => {}} />}
     </div>
   );
 };
