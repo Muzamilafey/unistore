@@ -44,7 +44,7 @@ const Footer = () => {
         <div className="footer-section business-details">
           <h4>Business Details</h4>
           <ul>
-            <li><FaStore /> Fashion Store</li>
+            <li><FaStore /> Muzafey</li>
             <li><FaMapMarkerAlt /> Mihango (Utawala), Nairobi</li>
             <li><FaPhoneAlt /> +254722651888</li>
             <li><FaEnvelope /> admin@muzamilafey.digital</li>
@@ -54,7 +54,7 @@ const Footer = () => {
 
       {/* Bottom Section */}
       <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} MANWELL STORE. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Muzafey. All rights reserved.</p>
         <p className="footer-credit">
           Designed & Developed by{" "}
           <a
