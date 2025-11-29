@@ -3,6 +3,7 @@ import AdminNavbar from './AdminSidebar';
 import api from '../../utils/api';
 import AppLockModal from '../../components/admin/AppLockModal';
 import './AdminDashboard.css';
+import './transactions.css';
 
 const AdminTransactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -81,49 +82,53 @@ const AdminTransactions = () => {
       <AdminNavbar />
       <main className="admin-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
         <h2 className="admin-page-title">Transactions</h2>
-        <div className="admin-summary-cards" style={{ marginBottom: 12 }}>
-          <div className="admin-summary-card">
-            <div className="admin-summary-title">Total Received</div>
-            <div className="admin-summary-value">KES {Number(totalReceived).toLocaleString()}</div>
+
+        <div className="transactions-top">
+          <div className="transactions-search">
+            <input type="text" placeholder="Search by id, customer, email or phone" value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="transactions-card-wrap">
+          <div className="transactions-card">
+            <div className="label">Total Received</div>
+            <div className="value">KES {Number(totalReceived).toLocaleString()}</div>
             <div style={{ color: '#94a3b8', fontSize: 13 }}>All successful transactions</div>
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-          <input
-            type="text"
-            placeholder="Search by id, customer, email or phone"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ padding: '8px 12px', width: 360 }}
-          />
-        </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: 'left', padding: 8 }}>ID</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Customer</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Email</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Phone</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Amount</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Status</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(tx => (
-              <tr key={tx._id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: 8 }}>{tx._id}</td>
-                <td style={{ padding: 8 }}>{tx.user?.name || '—'}</td>
-                <td style={{ padding: 8 }}>{tx.user?.email || '—'}</td>
-                <td style={{ padding: 8 }}>{tx.phoneNumber || tx.user?.phone || '—'}</td>
-                <td style={{ padding: 8 }}>KES {(Number(tx.amount) || 0).toFixed(2)}</td>
-                <td style={{ padding: 8 }}>{tx.status || '—'}</td>
-                <td style={{ padding: 8 }}>{new Date(tx.createdAt).toLocaleString()}</td>
+        <div className="transactions-table-wrapper">
+          <table className="transactions-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered.map(tx => (
+                <tr key={tx._id}>
+                  <td>{tx._id}</td>
+                  <td>{tx.user?.name || '—'}</td>
+                  <td>{tx.user?.email || '—'}</td>
+                  <td>{tx.phoneNumber || tx.user?.phone || '—'}</td>
+                  <td className="tx-amount">KES {(Number(tx.amount) || 0).toFixed(2)}</td>
+                  <td>
+                    <span className={`tx-status ${((tx.status||'').toString().toLowerCase().includes('paid'))?'paid':((tx.status||'').toString().toLowerCase().includes('pending')?'pending':'failed')}`}>
+                      {tx.status || '—'}
+                    </span>
+                  </td>
+                  <td>{new Date(tx.createdAt).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </main>
     </div>
   );

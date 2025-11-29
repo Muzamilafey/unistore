@@ -1,0 +1,18 @@
+.admin-add-product-form{
+  background:#fff; padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(2,6,23,0.06); max-width:980px; margin:0 auto;
+  display:grid; grid-template-columns:1fr; gap:14px
+}
+.admin-add-product-form .row{display:flex;gap:12px}
+.admin-add-product-form label{display:block;margin-bottom:6px;font-weight:600;color:#0f172a}
+.admin-add-product-form input[type="text"], .admin-add-product-form input[type="number"], .admin-add-product-form textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #e6eef6;background:#fbfdff}
+.admin-add-product-form textarea{min-height:120px}
+.admin-add-product-form input[type="file"]{padding:8px}
+.admin-add-product-form .preview{display:flex;gap:8px;margin-top:6px}
+.admin-add-product-form button[type="submit"]{background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;border:none;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(2,6,23,0.08)}
+.admin-add-product-form .message{color:#0f172a;margin-top:8px}
+.admin-add-product-form .inline-toast{box-shadow:0 6px 18px rgba(2,6,23,0.08)}
+
+@media(min-width:900px){
+  .admin-add-product-form{grid-template-columns:2fr 1fr}
+  .admin-add-product-form .preview{flex-direction:column}
+}
