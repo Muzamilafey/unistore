@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Default to relative `/api` so deployed frontend proxies API requests to same origin.
 // If you need to override (e.g. development or external backend), set `REACT_APP_API_URL`.
-const baseURL = process.env.REACT_APP_API_URL || '/api';
+const baseURL = process.env.REACT_APP_API_URL || 'https://unistorefront.onrender.com/api';
 console.log('API Base URL:', baseURL);
 
 const api = axios.create({
