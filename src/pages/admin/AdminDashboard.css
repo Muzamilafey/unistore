@@ -953,3 +953,20 @@ body, html {
     align-items: center;
   }
 }
+
+/* Navbar container to keep header within page width */
+.admin-navbar-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  box-sizing: border-box;
+}
+
+/* Tweak overall navbar to center content */
+.admin-navbar-flex {
+  justify-content: center;
+}
