@@ -19,6 +19,10 @@ const AdminTransactions = () => {
   const [lastDeletedTx, setLastDeletedTx] = useState(null);
   const [undoTimeoutId, setUndoTimeoutId] = useState(null);
   const [showTrash, setShowTrash] = useState(false);
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [pendingDeletePermanent, setPendingDeletePermanent] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
   useEffect(() => {
     checkAppLockStatus();
@@ -59,27 +63,40 @@ const AdminTransactions = () => {
 
   const handleDeleteConfirm = (txId) => {
     setSelectedTxId(txId);
+    setConfirmTitle('Delete Transaction');
+    setConfirmMessage('Delete this transaction? It will be moved to trash and can be restored later.');
+    setPendingDeletePermanent(false);
     setConfirmOpen(true);
   };
 
   const handleDelete = async () => {
-    if (!selectedTxId) return;
+    // This function is invoked after PIN verification via AppLockModal
+    const txId = pendingDeleteId || selectedTxId;
+    if (!txId) return;
     try {
-      await api.delete(`/admin/transactions/${selectedTxId}`);
-      // remove from current list
-      setTransactions(prev => prev.filter(t => t._id !== selectedTxId));
-      // set lastDeletedTx for undo
-      const deleted = transactions.find(t => t._id === selectedTxId);
-      setLastDeletedTx(deleted || { _id: selectedTxId });
-      // set undo timer (8s)
-      const id = setTimeout(() => setLastDeletedTx(null), 8000);
-      setUndoTimeoutId(id);
+      if (pendingDeletePermanent) {
+        await api.delete(`/admin/transactions/${txId}/permanent`);
+        setTransactions(prev => prev.filter(t => t._id !== txId));
+      } else {
+        await api.delete(`/admin/transactions/${txId}`);
+        // remove from current list
+        setTransactions(prev => prev.filter(t => t._id !== txId));
+        // set lastDeletedTx for undo
+        const deleted = transactions.find(t => t._id === txId);
+        setLastDeletedTx(deleted || { _id: txId });
+        // set undo timer (8s)
+        const id = setTimeout(() => setLastDeletedTx(null), 8000);
+        setUndoTimeoutId(id);
+      }
     } catch (err) {
       console.error('Failed to delete transaction', err);
       alert('Failed to delete transaction.');
     } finally {
       setConfirmOpen(false);
       setSelectedTxId(null);
+      setPendingDeleteId(null);
+      setPendingDeletePermanent(false);
+      setShowLockModal(false);
     }
   };
 
@@ -114,13 +131,29 @@ const AdminTransactions = () => {
   };
 
   const handlePermanentDelete = async (txId) => {
-    if (!window.confirm('Permanently delete this transaction? This cannot be undone.')) return;
-    try {
-      await api.delete(`/admin/transactions/${txId}/permanent`);
-      setTransactions(prev => prev.filter(t => t._id !== txId));
-    } catch (err) {
-      console.error('Failed to permanently delete', err);
-      alert('Failed to permanently delete');
+    setSelectedTxId(txId);
+    setConfirmTitle('Permanently Delete');
+    setConfirmMessage('Permanently delete this transaction? This cannot be undone.');
+    setPendingDeletePermanent(true);
+    setConfirmOpen(true);
+  };
+
+  const requestPinForPendingDelete = () => {
+    // open AppLockModal to verify PIN before performing delete
+    setPendingDeleteId(selectedTxId);
+    setShowLockModal(true);
+    setConfirmOpen(false);
+  };
+
+  const handleAppLockVerified = async (pin) => {
+    // If there is a pending delete, perform it; otherwise, treat as general verification
+    if (pendingDeleteId || selectedTxId) {
+      // ensure pendingDeleteId is populated
+      if (!pendingDeleteId) setPendingDeleteId(selectedTxId);
+      await handleDelete();
+    } else {
+      setIsVerified(true);
+      fetchTransactions();
     }
   };
 
@@ -147,9 +180,9 @@ const AdminTransactions = () => {
   return (
     <div className="admin-orders-bg">
       <AppLockModal
-        isOpen={showLockModal && !isVerified}
-        onClose={() => {}}
-        onVerified={handleVerified}
+        isOpen={showLockModal}
+        onClose={() => setShowLockModal(false)}
+        onVerified={handleAppLockVerified}
       />
 
       <AdminNavbar />
@@ -229,7 +262,7 @@ const AdminTransactions = () => {
           </div>
         )}
 
-        <ConfirmModal isOpen={confirmOpen} title="Delete Transaction" message="Delete this transaction? It will be moved to trash and can be restored later." onCancel={() => setConfirmOpen(false)} onConfirm={handleDelete} />
+        <ConfirmModal isOpen={confirmOpen} title={confirmTitle || 'Confirm'} message={confirmMessage || ''} onCancel={() => setConfirmOpen(false)} onConfirm={requestPinForPendingDelete} />
       </main>
     </div>
   );
