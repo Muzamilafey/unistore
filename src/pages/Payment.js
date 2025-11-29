@@ -91,18 +91,18 @@ const Payment = ({ shippingAddress, discount = { type: null, value: 0 }, couponC
             return;
           } else {
             console.error('Pesapal initiation missing redirect_url:', pesapalResponse);
-            setMessage('❌ Pesapal initiation failed');
+            setMessage('❌ Pesapal initiation failed. retry or choose another payment option');
             return;
           }
         } catch (initErr) {
           console.error('Pesapal initiation error:', initErr.response || initErr.message || initErr);
-          setMessage('❌ Pesapal initiation failed');
+          setMessage('❌ Pesapal initiation failed.retry or choose another payment option');
           return;
         }
       } else {
         setMessage("✅ Order placed successfully (Pay on Delivery).");
         clearCart();
-        setTimeout(() => navigate("/"), 2500);
+        setTimeout(() => navigate("/"), 50000);
       }
     } catch (err) {
       console.error("Payment error:", err);
