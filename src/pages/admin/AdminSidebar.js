@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './AdminDashboard.css';
-import { FaBars, FaTimes, FaHeadset, FaBell, FaSearch, FaUserCircle, FaGem } from 'react-icons/fa';
+import { FaBars, FaTimes, FaHeadset, FaBell, FaSearch, FaUserCircle } from 'react-icons/fa';
 
 const adminNavLinks = [
   { label: 'Dashboard', to: '/admin/dashboard' },
@@ -26,11 +26,6 @@ const AdminNavbar = () => {
       <div className="admin-navbar-container">
         <div className="admin-navbar-left">
           <div className="admin-navbar-brand">
-            <span className="brand-icon"><FaGem /></span>
-            <div className="brand-text">
-              <div className="admin-navbar-title">MANWELL</div>
-              <div className="admin-navbar-sub">Control Panel</div>
-            </div>
           </div>
         </div>
 
