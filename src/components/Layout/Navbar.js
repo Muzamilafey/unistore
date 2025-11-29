@@ -7,10 +7,11 @@ import api from '../../utils/api';
 import { FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, token } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const [categories, setCategories] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navRef = useRef(null);
 
   useEffect(() => {
@@ -24,6 +25,36 @@ const Navbar = () => {
     };
     fetchCategories();
   }, []);
+
+  // Fetch unread reminders count
+  useEffect(() => {
+    if (!user || !token) return;
+
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/orders/reminders/all`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const reminders = await response.json();
+          const unread = reminders.filter((r) => !r.read).length;
+          setUnreadCount(unread);
+        }
+      } catch (err) {
+        console.error('Error fetching unread reminders:', err);
+      }
+    };
+
+    fetchUnreadCount();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, [user, token]);
 
   useEffect(() => {
     const el = navRef.current;
@@ -91,6 +122,7 @@ const Navbar = () => {
                 <div className="dropdown-content">
                   <Link to="/profile">My Account</Link>
                   <Link to="/orders">My Orders</Link>
+                  <Link to="/inbox">📬 Inbox</Link>
                   <Link to="/change-password">Change Password</Link>
                   {user.role === 'user' && (
                     <>
@@ -120,6 +152,16 @@ const Navbar = () => {
 
         {/* Wishlist */}
         <Link to="/wishlist" className="nav-wish" title="Wishlist">♡</Link>
+
+        {/* Inbox with notification */}
+        {user && (
+          <Link to="/inbox" className="nav-inbox" title="Inbox">
+            📬
+            {unreadCount > 0 && (
+              <span className="inbox-notification-badge">{unreadCount}</span>
+            )}
+          </Link>
+        )}
 
         {/* Cart */}
         <Link to="/cart" className="nav-cart">

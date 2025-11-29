@@ -158,6 +158,34 @@ body {
   justify-content: center;
 }
 
+.nav-inbox {
+  position: relative;
+  font-size: 1.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.nav-inbox:hover {
+  opacity: 0.7;
+}
+
+.inbox-notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 0.65rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
 /* MOBILE BOTTOM NAVBAR */
   @media (max-width: 768px) {
     .navbar {
