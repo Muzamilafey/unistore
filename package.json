@@ -23,6 +23,10 @@
     "xlsx": "^0.18.5",
     "react-helmet": "^6.1.0"
   },
+  "optionalDependencies": {
+    "chart.js": "^4.4.0",
+    "react-chartjs-2": "^5.2.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build"

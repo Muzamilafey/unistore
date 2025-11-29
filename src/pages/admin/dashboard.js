@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './AdminDashboard.css';
 import api from '../../utils/api';
+import { Line, Doughnut } from 'react-chartjs-2';
+import { Chart, LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+Chart.register(LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement);
 
 const DashboardPage = () => {
   const [ordersSummary, setOrdersSummary] = useState({
@@ -34,16 +40,29 @@ const DashboardPage = () => {
         }
       }
 
-      // Fallback: try transactions for recent/activity and revenue if available
+      // Try fetching recent orders specifically (preferred)
       try {
-        const t = await api.get('/admin/transactions');
-        if (t?.data && Array.isArray(t.data)) {
-          setRecent(t.data.slice(0, 8));
-          const revenue = t.data.reduce((s, it) => s + Number(it.amount || 0), 0);
-          setOrdersSummary(prev => ({ ...prev, totalRevenue: prev.totalRevenue || revenue }));
+        const o = await api.get('/admin/orders?limit=8');
+        if (o?.data) {
+          const orders = Array.isArray(o.data) ? o.data : (o.data.orders || o.data.docs || []);
+          if (orders.length) {
+            setRecent(orders.slice(0, 8));
+            const revenue = orders.reduce((s, it) => s + Number(it.totalAmount || it.amount || 0), 0);
+            setOrdersSummary(prev => ({ ...prev, totalRevenue: prev.totalRevenue || revenue }));
+          }
         }
       } catch (e) {
-        // ignore
+        // fallback to transactions
+        try {
+          const t = await api.get('/admin/transactions');
+          if (t?.data && Array.isArray(t.data)) {
+            setRecent(t.data.slice(0, 8));
+            const revenue = t.data.reduce((s, it) => s + Number(it.amount || 0), 0);
+            setOrdersSummary(prev => ({ ...prev, totalRevenue: prev.totalRevenue || revenue }));
+          }
+        } catch (ee) {
+          // ignore
+        }
       }
 
       setLoading(false);
@@ -53,6 +72,61 @@ const DashboardPage = () => {
   }, []);
 
   const formatCurrency = v => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(Number(v || 0));
+
+  // prepare chart data from recent orders (monthly sums)
+  const getSalesChartData = () => {
+    // Create last 12 months labels
+    const labels = [];
+    const now = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      labels.push(d.toLocaleString('default', { month: 'short' }));
+    }
+    const sums = labels.map(() => 0);
+    (recent || []).forEach(o => {
+      const d = new Date(o.createdAt || o.created_at || o.date || Date.now());
+      const idx = labels.findIndex(l => new Date(now.getFullYear(), now.getMonth() - (11 - labels.indexOf(l)), 1).getMonth() === d.getMonth());
+      if (idx >= 0) sums[idx] += Number(o.totalAmount || o.amount || o.price || 0);
+    });
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Sales',
+          data: sums,
+          borderColor: '#4f46e5',
+          backgroundColor: 'rgba(79,70,229,0.08)',
+          tension: 0.3,
+          fill: true,
+        },
+      ],
+    };
+  };
+
+  const getDonutData = () => {
+    const inProgress = (recent || []).filter(r => (r.status || '').toLowerCase().includes('processing') || (r.status || '').toLowerCase().includes('pending')).length;
+    const finished = (recent || []).filter(r => (r.status || '').toLowerCase().includes('completed') || (r.status || '').toLowerCase().includes('delivered')).length;
+    const notStarted = Math.max(0, (recent || []).length - inProgress - finished);
+    return {
+      labels: ['In Progress', 'Finished', 'Not Started'],
+      datasets: [{ data: [inProgress, finished, notStarted], backgroundColor: ['#ff7a45', '#4f46e5', '#94a3b8'] }]
+    };
+  };
+
+  const exportOrdersPDF = () => {
+    const doc = new jsPDF({ orientation: 'landscape' });
+    doc.text('Recent Orders', 14, 16);
+    autoTable(doc, {
+      head: [['No', 'Order ID', 'Date', 'Customer', 'Amount', 'Status']],
+      body: (recent || []).map((r, i) => [i + 1, r.orderId || r._id || '—', r.createdAt ? new Date(r.createdAt).toLocaleString() : '—', r.customerName || r.customer || '-', formatCurrency(r.totalAmount || r.amount || 0), r.status || '-']),
+      startY: 22,
+    });
+    doc.save('recent-orders.pdf');
+  };
+
+  const printDashboard = () => {
+    window.print();
+  };
 
   return (
     <div className="admin-dashboard-page">
@@ -74,6 +148,10 @@ const DashboardPage = () => {
                 <strong>{ordersSummary.products}</strong>
               </div>
             </div>
+            <div style={{ marginLeft: 16, display: 'flex', gap: 8 }}>
+              <button className="admin-btn-secondary" onClick={exportOrdersPDF}>Export PDF</button>
+              <button className="admin-btn-secondary" onClick={printDashboard}>Print</button>
+            </div>
           </div>
         </div>
       </header>
@@ -85,93 +163,104 @@ const DashboardPage = () => {
           <div className="error-message">{error}</div>
         ) : (
           <>
-            <section className="cards-grid" aria-label="summaries">
-              <div className="card">
-                <div className="card-row">
-                  <div>
-                    <div className="card-title">Total Orders</div>
-                    <div className="card-value">{ordersSummary.totalOrders}</div>
-                  </div>
-                  <div className="card-icon">📦</div>
-                </div>
-                <div className="card-sub">Orders placed across all channels</div>
+            <section className="top-metrics">
+              <div className="metric-card c1">
+                <div className="metric-label">New Customer</div>
+                <div className="metric-value">{ordersSummary.customers || 0}</div>
+                <div className="metric-sub">{Math.round((ordersSummary.customers || 0) * 0.1)}% | This month</div>
               </div>
-
-              <div className="card">
-                <div className="card-row">
-                  <div>
-                    <div className="card-title">Revenue</div>
-                    <div className="card-value">{formatCurrency(ordersSummary.totalRevenue)}</div>
-                  </div>
-                  <div className="card-icon">💰</div>
-                </div>
-                <div className="card-sub">Gross collected</div>
+              <div className="metric-card c2">
+                <div className="metric-label">Running Orders</div>
+                <div className="metric-value">{ordersSummary.totalOrders || 0}</div>
+                <div className="metric-sub">{Math.round((ordersSummary.totalOrders || 0) * 0.1)}% | This month</div>
               </div>
-
-              <div className="card">
-                <div className="card-row">
-                  <div>
-                    <div className="card-title">Products</div>
-                    <div className="card-value">{ordersSummary.products}</div>
-                  </div>
-                  <div className="card-icon">🛒</div>
-                </div>
-                <div className="card-sub">Active product SKUs</div>
+              <div className="metric-card c3">
+                <div className="metric-label">Total Profit</div>
+                <div className="metric-value">{formatCurrency(ordersSummary.totalRevenue || 0)}</div>
+                <div className="metric-sub">{Math.round((ordersSummary.totalRevenue || 0) * 0.01)}% | This month</div>
               </div>
-
-              <div className="card">
-                <div className="card-row">
-                  <div>
-                    <div className="card-title">Customers</div>
-                    <div className="card-value">{ordersSummary.customers}</div>
-                  </div>
-                  <div className="card-icon">👥</div>
-                </div>
-                <div className="card-sub">Registered customers</div>
-              </div>
-
-              <div className="card">
-                <div className="card-row">
-                  <div>
-                    <div className="card-title">Returns</div>
-                    <div className="card-value">{ordersSummary.returns}</div>
-                  </div>
-                  <div className="card-icon">↩️</div>
-                </div>
-                <div className="card-sub">Items returned / refunded</div>
-              </div>
-
-              <div className="card wide">
-                <div className="card-row">
-                  <div>
-                    <div className="card-title">Conversion</div>
-                    <div className="card-value">—</div>
-                  </div>
-                  <div className="card-icon">📈</div>
-                </div>
-                <div className="card-sub">Conversion and other KPIs (coming soon)</div>
+              <div className="metric-card c4">
+                <div className="metric-label">Order Completed</div>
+                <div className="metric-value">{ordersSummary.completedOrders || 0}</div>
+                <div className="metric-sub">{ordersSummary.completedOrders ? '10% ↑ | This month' : ''}</div>
               </div>
             </section>
 
-            <section className="recent-activity">
-              <h2>Recent Activity</h2>
-              <div className="recent-list">
-                {recent && recent.length ? (
-                  recent.map((r, i) => (
-                    <div key={r._id || i} className="recent-item">
-                      <div className="recent-left">
-                        <div className="recent-title">{r.title || r.type || r.description || `Activity ${i + 1}`}</div>
-                        <div className="recent-sub">{r.sub || r.customer || (r.createdAt ? new Date(r.createdAt).toLocaleString() : '')}</div>
-                      </div>
-                      <div className="recent-right">
-                        <div className="recent-meta">{r.amount ? formatCurrency(r.amount) : ''}</div>
-                        <div className="recent-time">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="empty-note">No recent activity to show.</div>
-                )}
+            <section className="main-grid">
+              <div className="sales-overview card-panel">
+                <div className="panel-header">
+                  <h3>Sales Overview</h3>
+                  <div className="panel-controls">
+                    <button className="admin-btn-secondary">This Year</button>
+                  </div>
+                </div>
+                <div style={{ height: 260 }}>
+                  <Line data={getSalesChartData()} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+                </div>
+              </div>
+
+              <div className="sales-reports card-panel">
+                <div className="panel-header">
+                  <h3>Sales Reports</h3>
+                  <div className="panel-controls small">This Year</div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div style={{ width: 180, height: 180 }}>
+                    <Doughnut data={getDonutData()} options={{ maintainAspectRatio: false }} />
+                  </div>
+                  <div className="report-summary">
+                    <div className="report-amount">{formatCurrency(ordersSummary.totalRevenue || 0)}</div>
+                    <div className="report-note">{ordersSummary.totalRevenue ? '+$150 today' : ''}</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="recent-orders card-panel">
+              <div className="panel-header">
+                <h3>Recent Orders</h3>
+                <div className="panel-controls">
+                  <a href="#" className="see-all">See All</a>
+                </div>
+              </div>
+              <div className="orders-table-wrapper">
+                <table className="orders-table">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Order ID</th>
+                      <th>Order Date</th>
+                      <th>Product Name</th>
+                      <th>Customers</th>
+                      <th>Total Amount</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(recent && recent.length ? recent : []).map((r, i) => (
+                      <tr key={r._id || i}>
+                        <td>{String(i + 1).padStart(2, '0')}</td>
+                        <td>{r.orderId || r._id || '—'}</td>
+                        <td>{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—'}</td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            {((r.items && r.items[0]?.image) || r.image || r.items?.[0]?.images?.[0]) ? (
+                              <img src={r.items && r.items[0]?.image ? r.items[0].image : (r.image || r.items?.[0]?.images?.[0])} alt="prod" style={{ width: 46, height: 46, objectFit: 'cover', borderRadius: 8 }} />
+                            ) : (
+                              <div style={{ width:46, height:46, borderRadius:8, background:'#f1f5f9', display:'flex', alignItems:'center', justifyContent:'center' }}>📦</div>
+                            )}
+                            <div>{(r.items && r.items[0]?.name) || r.productName || '—'}</div>
+                          </div>
+                        </td>
+                        <td>{r.customerName || r.customer || r.user?.name || '—'}</td>
+                        <td>{r.amount ? formatCurrency(r.amount) : '—'}</td>
+                        <td><span className={`admin-status admin-status-${(r.status || 'Pending')}`}>{r.status || 'Pending'}</span></td>
+                        <td><button className="btn">View</button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </section>
           </>

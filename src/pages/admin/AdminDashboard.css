@@ -900,6 +900,71 @@ body, html {
   color: #007bff;
 }
 
+/* New dashboard layout styles to match provided design (no sidebar) */
+.top-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+.metric-card { border-radius: 12px; padding: 18px; color: #071013; box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
+.metric-card .metric-label { font-size: 0.9rem; color: #475569; font-weight: 600; }
+.metric-card .metric-value { font-size: 1.9rem; font-weight: 800; margin-top: 6px; }
+.metric-card .metric-sub { font-size: 0.85rem; color: #6b7280; margin-top: 8px; }
+.metric-card.c1 { background: linear-gradient(90deg,#fff7ed,#fff1e6); border: 1px solid rgba(245, 158, 11, 0.06); }
+.metric-card.c2 { background: linear-gradient(90deg,#f8fafc,#eef2ff); border: 1px solid rgba(59,130,246,0.06); }
+.metric-card.c3 { background: linear-gradient(90deg,#f8fafc,#f3e8ff); border: 1px solid rgba(124,58,237,0.06); }
+.metric-card.c4 { background: linear-gradient(90deg,#ecfdf5,#f0fdf4); border: 1px solid rgba(34,197,94,0.06); }
+
+/* micro-animations */
+.metric-card { transition: transform 220ms cubic-bezier(.2,.9,.3,1), box-shadow 220ms; }
+.metric-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(2,6,23,0.09); }
+.orders-table tr { transition: background 160ms, transform 160ms; }
+.orders-table tr:hover { transform: translateY(-4px); }
+
+.main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-bottom: 22px; }
+.card-panel { background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 6px 18px rgba(2,6,23,0.04); }
+.panel-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.panel-header h3 { margin:0; font-size:1.05rem; color:#0f1724; }
+.chart-placeholder { height: 260px; border-radius: 8px; background: linear-gradient(180deg,#ffffff,#fbfdff); border: 1px dashed rgba(15,23,42,0.04); display:flex; align-items:center; justify-content:center; color:#94a3b8; }
+.donut-placeholder { height: 160px; border-radius: 8px; background: linear-gradient(180deg,#ffffff,#fbfdff); border: 1px dashed rgba(15,23,42,0.04); display:flex; align-items:center; justify-content:center; color:#94a3b8; margin-bottom:10px; }
+.report-summary { text-align:center; padding-top:6px; }
+.report-summary .report-amount { font-size:1.3rem; font-weight:800; color:#111827; }
+.report-summary .report-note { font-size:0.9rem; color:#6b7280; }
+
+.recent-orders .orders-table-wrapper { overflow:auto; }
+.orders-table { width:100%; border-collapse:collapse; font-size:0.95rem; }
+.orders-table th, .orders-table td { padding:12px 10px; border-bottom:1px solid #eef2f6; text-align:left; }
+.orders-table th { font-weight:700; background:transparent; color:#374151; }
+.orders-table tr:hover { background:#fbfdff; }
+.see-all { color:#3b82f6; text-decoration:none; font-weight:700; }
+
+/* Responsive adjustments */
+@media (max-width: 1100px) {
+  .top-metrics { grid-template-columns: repeat(2,1fr); }
+  .main-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .top-metrics { grid-template-columns: 1fr; }
+}
+
+/* Modal overlay for forms */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+.modal-overlay .admin-form {
+  max-width: 720px;
+  width: 100%;
+  margin: 0;
+  box-shadow: 0 18px 50px rgba(2,6,23,0.5);
+}
+
+/* small export/print buttons adjustments */
+.admin-header .admin-btn-secondary { padding: 8px 12px; font-size: 0.9rem; }
+}
+
 .admin-navbar-links-flex li a:hover {
   color: #007bff;
 }

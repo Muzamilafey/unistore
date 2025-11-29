@@ -222,7 +222,7 @@ const AdminProducts = () => {
             
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className="admin-btn-primary" onClick={() => navigate('/admin/product/addproduct')}>+ Add Product</button>
+              <button className="admin-btn-primary" onClick={() => { clearForm(); setShowForm(true); }}>+ Add Product</button>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="admin-btn-secondary" onClick={handleDownloadExcel}>Download Excel</button>
@@ -231,11 +231,12 @@ const AdminProducts = () => {
           </div>
         </section>
         {showForm && (
-          <div className="admin-form">
-            <h2>{editingProduct ? "Edit Product" : "Add Product"}</h2>
-            {error && <div className="admin-error">{error}</div>}
-            {success && <div className="admin-success">{success}</div>}
-            <form onSubmit={handleSubmit} noValidate>
+          <div className="modal-overlay" onClick={(e) => { if (e.target.className && e.target.className.includes('modal-overlay')) clearForm(); }}>
+            <div className="admin-form">
+              <h2>{editingProduct ? "Edit Product" : "Add Product"}</h2>
+              {error && <div className="admin-error">{error}</div>}
+              {success && <div className="admin-success">{success}</div>}
+              <form onSubmit={handleSubmit} noValidate>
               <input
                 name="name"
                 placeholder="Name"
@@ -299,7 +300,8 @@ const AdminProducts = () => {
                   Cancel
                 </button>
               </div>
-            </form>
+              </form>
+            </div>
           </div>
         )}
         <section className="products-table-section">
