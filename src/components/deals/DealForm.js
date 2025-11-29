@@ -16,6 +16,8 @@ const DealForm = ({ deal, onSave }) => {
     bannerImage: ''
   });
   const [products, setProducts] = useState([]);
+  const [productQuery, setProductQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -32,9 +34,11 @@ const DealForm = ({ deal, onSave }) => {
     setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const handleProductSelect = e => {
-    const options = Array.from(e.target.selectedOptions).map(o => o.value);
-    setForm(f => ({ ...f, productIds: options }));
+  const toggleProduct = id => {
+    setForm(f => {
+      const has = f.productIds.includes(id);
+      return { ...f, productIds: has ? f.productIds.filter(x => x !== id) : [...f.productIds, id] };
+    });
   };
 
   const handleImageUpload = e => {
@@ -75,9 +79,56 @@ const DealForm = ({ deal, onSave }) => {
       </label>
       <label>Discount Value<input name="discountValue" type="number" value={form.discountValue} onChange={handleChange} required /></label>
       <label>Products
-        <select name="productIds" multiple value={form.productIds} onChange={handleProductSelect}>
-          {products.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
-        </select>
+        <div className="product-multiselect">
+          <div className="chips" onClick={() => setShowDropdown(s => !s)}>
+            {form.productIds && form.productIds.length ? (
+              form.productIds.map(pid => {
+                const p = products.find(x => x._id === pid) || { name: pid };
+                return (
+                  <span key={pid} className="chip">
+                    {p.name}
+                    <button type="button" className="chip-remove" onClick={(e) => { e.stopPropagation(); toggleProduct(pid); }}>×</button>
+                  </span>
+                );
+              })
+            ) : (
+              <span className="placeholder">Select products...</span>
+            )}
+          </div>
+
+          <div className="multi-controls">
+            <input
+              className="product-search"
+              type="text"
+              placeholder="Search products..."
+              value={productQuery}
+              onChange={e => setProductQuery(e.target.value)}
+              onFocus={() => setShowDropdown(true)}
+            />
+          </div>
+
+          {showDropdown && (
+            <div className="product-list" role="listbox">
+              {products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())).slice(0, 50).map(p => (
+                <label key={p._id} className="product-item">
+                  <input type="checkbox" checked={form.productIds.includes(p._id)} onChange={() => toggleProduct(p._id)} />
+                  {p.image || (p.images && p.images[0]) ? (
+                    <img src={p.image || p.images[0]} alt={p.name} />
+                  ) : (
+                    <div className="thumb-placeholder">📦</div>
+                  )}
+                  <div className="product-meta">
+                    <div className="product-name">{p.name}</div>
+                    <div className="product-sub">Ksh {Number(p.price || 0).toLocaleString()}</div>
+                  </div>
+                </label>
+              ))}
+              {products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())).length === 0 && (
+                <div className="no-results">No products match.</div>
+              )}
+            </div>
+          )}
+        </div>
       </label>
       <label>Category<input name="category" value={form.category} onChange={handleChange} /></label>
       <label>Start Date<input name="startDate" type="date" value={form.startDate?.slice(0,10) || ''} onChange={handleChange} required /></label>

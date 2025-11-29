@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import AdminNavbar from './AdminSidebar';
-import AdminSidebar from './AdminSidebar';
-import { Link } from 'react-router-dom';
 import './AdminDashboard.css';
 import api from '../../utils/api';
 
@@ -11,139 +8,175 @@ const DashboardPage = () => {
     newOrders: 0,
     completedOrders: 0,
     totalRevenue: 0,
+    products: 0,
+    customers: 0,
+    returns: 0,
   });
+  const [recent, setRecent] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/dashboard-data')
-      .then(res => {
-        setOrdersSummary(res.data);
-        setError(null);
-        setLoading(false);
-      })
-      .catch(() => {
-        api.get('/admin/stats')
-          .then(res => {
-            setOrdersSummary(res.data);
-            setError(null);
-          })
-          .catch(err => {
-            setError(err.response?.data?.message || 'Failed to fetch orders summary');
-          })
-          .finally(() => setLoading(false));
-      });
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await api.get('/admin/dashboard-data');
+        if (res?.data) {
+          setOrdersSummary(prev => ({ ...prev, ...res.data }));
+          if (res.data.recentActivity) setRecent(res.data.recentActivity);
+        }
+      } catch (e) {
+        try {
+          const s = await api.get('/admin/stats');
+          if (s?.data) setOrdersSummary(prev => ({ ...prev, ...s.data }));
+        } catch (err) {
+          setError(err.response?.data?.message || 'Failed to fetch dashboard data');
+        }
+      }
+
+      // Fallback: try transactions for recent/activity and revenue if available
+      try {
+        const t = await api.get('/admin/transactions');
+        if (t?.data && Array.isArray(t.data)) {
+          setRecent(t.data.slice(0, 8));
+          const revenue = t.data.reduce((s, it) => s + Number(it.amount || 0), 0);
+          setOrdersSummary(prev => ({ ...prev, totalRevenue: prev.totalRevenue || revenue }));
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      setLoading(false);
+    };
+
+    load();
   }, []);
 
+  const formatCurrency = v => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(Number(v || 0));
+
   return (
-    <div className="admin-dashboard-layout">
-      <AdminNavbar />
-      <div className="admin-main-wrapper">
-        <aside className="admin-sidebar-panel">
-          <div className="sidebar-content">
-            <Link to="/admin/dashboard" className="sidebar-item active">
-              <span>📊</span> Dashboards
-            </Link>
-            <Link to="/admin/products" className="sidebar-item">
-              <span>📦</span> eCommerce
-            </Link>
-            <Link to="/admin/orders" className="sidebar-item">
-              <span>📋</span> Analytics
-            </Link>
-            <Link to="/admin/customers" className="sidebar-item">
-              <span>👥</span> CRM
-            </Link>
-            <hr style={{ margin: '16px 0', borderColor: '#e5e7eb' }} />
-            <div className="sidebar-label">WEBAPPS</div>
-            <Link to="/admin/transactions" className="sidebar-item">
-              <span>💬</span> Chat
-            </Link>
-            <Link to="/admin/support" className="sidebar-item">
-              <span>📧</span> Email
-            </Link>
-            <Link to="/admin/discounts" className="sidebar-item">
-              <span>📝</span> Contact
-            </Link>
-            <Link to="/admin/returns" className="sidebar-item">
-              <span>📄</span> Invoice
-            </Link>
-            <Link to="/admin/deals" className="sidebar-item">
-              <span>📊</span> Kanban
-            </Link>
-            <Link to="/admin/discount-carousel" className="sidebar-item">
-              <span>📅</span> Calendar
-            </Link>
-            <hr style={{ margin: '16px 0', borderColor: '#e5e7eb' }} />
-            <div className="sidebar-label">UI PANELS</div>
-            <Link to="/admin/applock" className="sidebar-item">
-              <span>👤</span> User Profile
-            </Link>
-            <div className="sidebar-item">
-              <span>⚙️</span> Account Settings
-            </div>
-            <div className="sidebar-item">
-              <span>📄</span> Other Pages
+    <div className="admin-dashboard-page">
+      <header className="admin-header">
+        <div className="admin-header-inner">
+          <h1 className="admin-title">Admin Dashboard</h1>
+          <div className="admin-header-actions">
+            <div className="admin-summary-inline">
+              <div className="small-metric">
+                <span className="label">Orders</span>
+                <strong>{ordersSummary.totalOrders}</strong>
+              </div>
+              <div className="small-metric">
+                <span className="label">Revenue</span>
+                <strong>{formatCurrency(ordersSummary.totalRevenue)}</strong>
+              </div>
+              <div className="small-metric">
+                <span className="label">Products</span>
+                <strong>{ordersSummary.products}</strong>
+              </div>
             </div>
           </div>
-        </aside>
-        <main className="admin-main-content">
-          <div className="admin-header-row">
-            <h2 className="admin-page-title">eCommerce</h2>
-            <div className="admin-header-actions">
-              <button className="admin-btn-icon">📊</button>
-              <button className="admin-btn-icon">🔔</button>
-              <button className="admin-btn-icon">👤</button>
-            </div>
-          </div>
+        </div>
+      </header>
 
-          {loading ? (
-            <div className="loading">Loading...</div>
-          ) : error ? (
-            <div className="error-message">{error}</div>
-          ) : (
-            <div className="dashboard-content">
-              <div className="orders-grid">
-                <div className="order-summary-card">
-                  <h3>Performance Goal</h3>
-                  <div className="card-metric">Monthly performance reports</div>
-                  <p style={{ fontSize: '1.8rem', fontWeight: 700, color: '#007bff', marginTop: 12 }}>12.65%</p>
-                  <button className="admin-btn" style={{ marginTop: 12 }}>View Reports</button>
-                </div>
-                <div className="order-summary-card">
-                  <h3>Sales: $5,65K</h3>
-                  <div style={{ textAlign: 'center', height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ fontSize: '2rem', color: '#3b82f6' }}>60%</div>
+      <main className="admin-main container">
+        {loading ? (
+          <div className="loading">Loading...</div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : (
+          <>
+            <section className="cards-grid" aria-label="summaries">
+              <div className="card">
+                <div className="card-row">
+                  <div>
+                    <div className="card-title">Total Orders</div>
+                    <div className="card-value">{ordersSummary.totalOrders}</div>
                   </div>
+                  <div className="card-icon">📦</div>
                 </div>
-                <div className="order-summary-card">
-                  <h3>Monthly Earning</h3>
-                  <p style={{ fontSize: '1.8rem', fontWeight: 700, color: '#ef4444', marginTop: 12 }}>$32.46K</p>
-                  <div style={{ color: '#ef4444', fontSize: '0.9rem', marginTop: 8 }}>📈 112.4%</div>
-                </div>
+                <div className="card-sub">Orders placed across all channels</div>
               </div>
 
-              <div className="orders-grid" style={{ marginTop: 24 }}>
-                <div className="order-summary-card">
-                  <h3>Total Orders</h3>
-                  <p style={{ fontSize: '2rem', fontWeight: 700, marginTop: 12 }}>{ordersSummary.totalOrders}</p>
+              <div className="card">
+                <div className="card-row">
+                  <div>
+                    <div className="card-title">Revenue</div>
+                    <div className="card-value">{formatCurrency(ordersSummary.totalRevenue)}</div>
+                  </div>
+                  <div className="card-icon">💰</div>
                 </div>
-                <div className="order-summary-card">
-                  <h3>New Orders</h3>
-                  <p style={{ fontSize: '2rem', fontWeight: 700, marginTop: 12 }}>{ordersSummary.newOrders}</p>
-                </div>
-                <div className="order-summary-card">
-                  <h3>Completed Orders</h3>
-                  <p style={{ fontSize: '2rem', fontWeight: 700, marginTop: 12 }}>{ordersSummary.completedOrders}</p>
-                </div>
-                <div className="order-summary-card revenue-card">
-                  <h3>Total Revenue</h3>
-                  <p style={{ fontSize: '2rem', fontWeight: 700, marginTop: 12 }}>Ksh {ordersSummary.totalRevenue?.toLocaleString()}</p>
-                </div>
+                <div className="card-sub">Gross collected</div>
               </div>
-            </div>
-          )}
-        </main>
-      </div>
+
+              <div className="card">
+                <div className="card-row">
+                  <div>
+                    <div className="card-title">Products</div>
+                    <div className="card-value">{ordersSummary.products}</div>
+                  </div>
+                  <div className="card-icon">🛒</div>
+                </div>
+                <div className="card-sub">Active product SKUs</div>
+              </div>
+
+              <div className="card">
+                <div className="card-row">
+                  <div>
+                    <div className="card-title">Customers</div>
+                    <div className="card-value">{ordersSummary.customers}</div>
+                  </div>
+                  <div className="card-icon">👥</div>
+                </div>
+                <div className="card-sub">Registered customers</div>
+              </div>
+
+              <div className="card">
+                <div className="card-row">
+                  <div>
+                    <div className="card-title">Returns</div>
+                    <div className="card-value">{ordersSummary.returns}</div>
+                  </div>
+                  <div className="card-icon">↩️</div>
+                </div>
+                <div className="card-sub">Items returned / refunded</div>
+              </div>
+
+              <div className="card wide">
+                <div className="card-row">
+                  <div>
+                    <div className="card-title">Conversion</div>
+                    <div className="card-value">—</div>
+                  </div>
+                  <div className="card-icon">📈</div>
+                </div>
+                <div className="card-sub">Conversion and other KPIs (coming soon)</div>
+              </div>
+            </section>
+
+            <section className="recent-activity">
+              <h2>Recent Activity</h2>
+              <div className="recent-list">
+                {recent && recent.length ? (
+                  recent.map((r, i) => (
+                    <div key={r._id || i} className="recent-item">
+                      <div className="recent-left">
+                        <div className="recent-title">{r.title || r.type || r.description || `Activity ${i + 1}`}</div>
+                        <div className="recent-sub">{r.sub || r.customer || (r.createdAt ? new Date(r.createdAt).toLocaleString() : '')}</div>
+                      </div>
+                      <div className="recent-right">
+                        <div className="recent-meta">{r.amount ? formatCurrency(r.amount) : ''}</div>
+                        <div className="recent-time">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="empty-note">No recent activity to show.</div>
+                )}
+              </div>
+            </section>
+          </>
+        )}
+      </main>
     </div>
   );
 };
