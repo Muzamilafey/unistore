@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 import './AddProductForm.css';
 import axios from '../../utils/api';
 
@@ -61,10 +62,16 @@ const AddProductForm = ({ product = null, onDone = () => {} }) => {
     return () => { mounted = false; };
   }, [product]);
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 5); // limit to 5 files
+  const onDrop = useCallback((acceptedFiles) => {
+    const files = acceptedFiles.slice(0, 5); // limit to 5 files
     setImages(files);
-  };
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: 'image/*',
+    multiple: true,
+  });
 
   // build previews whenever images change; createObjectURL urls are revoked in the cleanup
   useEffect(() => {
@@ -164,7 +171,14 @@ const AddProductForm = ({ product = null, onDone = () => {} }) => {
       </div>
       <div>
         <label className="admin-input-label">Images (up to 5)</label>
-        <input type="file" accept="image/*" multiple onChange={handleFileChange} />
+        <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
+          <input {...getInputProps()} />
+          {
+            isDragActive ?
+              <p>Drop the files here ...</p> :
+              <p>Drag 'n' drop some files here, or click to select files</p>
+          }
+        </div>
 
         {/* show existing image URLs when editing */}
         {existingImages.length > 0 && (

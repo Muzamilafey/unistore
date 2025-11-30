@@ -12,6 +12,20 @@
 .admin-add-product-form .message{color:#0f172a;margin-top:8px}
 .admin-add-product-form .inline-toast{box-shadow:0 6px 18px rgba(2,6,23,0.08)}
 
+.dropzone {
+  border: 2px dashed #e6eef6;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #fbfdff;
+  transition: border-color 0.3s;
+}
+
+.dropzone.active {
+  border-color: #0f172a;
+}
+
 @media(min-width:900px){
   .admin-add-product-form{grid-template-columns:2fr 1fr}
   .admin-add-product-form .preview{flex-direction:column}
