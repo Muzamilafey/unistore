@@ -154,10 +154,12 @@
 
 /* Summary cards */
 .order-summary-card-whole {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   margin: 24px 0;
+  align-items: stretch;
+  justify-content: space-between;
 }
 
 .order-summary-card {
@@ -167,6 +169,10 @@
   border-left: 4px solid #667eea;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   transition: all 0.3s ease;
+  /* Flex sizing so cards layout nicely in a row */
+  flex: 1 1 180px;
+  min-width: 180px;
+  max-width: 320px;
 }
 
 .order-summary-card:hover {
