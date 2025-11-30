@@ -4,7 +4,7 @@ import './google-signin.css';
 const GoogleSignIn = ({ onGoogleSignIn }) => {
   const handleGoogleClick = () => {
     // Redirect to backend Google OAuth endpoint
-    window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/google`;
+    window.location.href = `${process.env.REACT_APP_API_URL || 'https://unistorefront.onrender.com'}/api/auth/google`;
   };
 
   return (
