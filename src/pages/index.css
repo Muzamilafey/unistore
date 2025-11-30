@@ -6,6 +6,23 @@
   background: #f7f7f9;
 }
 
+/* Desktop Layout - hidden on mobile */
+@media (max-width: 768px) {
+  .desktop-layout {
+    display: none !important;
+  }
+}
+
+/* Mobile Layout - hidden on desktop */
+@media (min-width: 769px) {
+  .hero-carousel-wrapper:not(.main-carousel-wrapper),
+  .hero-section-standalone,
+  .products-section > :not(.desktop-layout):not(.trust-badges-section) {
+    display: none;
+  }
+}
+
+/* Mobile-first styles for vertical stack */
 .hero-carousel-wrapper {
   position: relative;
   width: 100%;
@@ -104,3 +121,4 @@
     padding: 15px;
   }
 }
+

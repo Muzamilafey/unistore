@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Hero from "../components/Hero/Hero";
 import DiscountedCarousel from "../components/Carousel/DiscountedCarousel";
 import FeaturedCarousel from "../components/Carousel/FeaturedCarousel";
@@ -7,24 +7,62 @@ import ApiDebug from "../components/Debug/ApiDebug";
 import TrustBadges from "../components/Trust/TrustBadges";
 import DealBannerCarousel from "../components/deals/DealBannerCarousel";
 import DealsList from "../components/deals/DealsList";
+import DesktopLayout from "../components/Layout/DesktopLayout";
 import { Helmet } from "react-helmet";
 import "./index.css";
 
 const HomePage = () => {
-  return (
-    <div className="products-section">
-      {/* DEBUG: show API response to help diagnose deployment issues */}
-      
-      <div className="hero-carousel-wrapper">
-        <DiscountedCarousel />
-      </div>
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Desktop Layout Components
+  const heroCarousel = <DiscountedCarousel />;
+  const mainContent = (
+    <>
       <FeaturedCarousel />
       <div className="hero-section-standalone">
         <Hero />
       </div>
-      <DealBannerCarousel />
-      <DealsList />
-      <FeaturedCategories />
+    </>
+  );
+  const deals = <DealsList />;
+  const featuredCategories = <FeaturedCategories />;
+
+  return (
+    <div className="products-section">
+      {/* DEBUG: show API response to help diagnose deployment issues */}
+      
+      {isDesktop ? (
+        // Desktop Layout - Three Column
+        <DesktopLayout
+          mainContent={mainContent}
+          heroCarousel={heroCarousel}
+          deals={deals}
+          featuredCategories={featuredCategories}
+        />
+      ) : (
+        // Mobile Layout - Traditional vertical stack
+        <>
+          <div className="hero-carousel-wrapper">
+            <DiscountedCarousel />
+          </div>
+          <FeaturedCarousel />
+          <div className="hero-section-standalone">
+            <Hero />
+          </div>
+          <DealBannerCarousel />
+          <DealsList />
+          <FeaturedCategories />
+        </>
+      )}
       <TrustBadges />
       <Helmet>
         {/* Home Page Meta Tags */}

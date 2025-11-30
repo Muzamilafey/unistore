@@ -1,0 +1,220 @@
+/* Desktop Layout - Three Column */
+.desktop-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  gap: 16px;
+  padding: 16px;
+  background: #f7f7f9;
+  min-height: calc(100vh - var(--navbar-height, 70px));
+}
+
+/* Left Sidebar */
+.desktop-left-sidebar {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  height: fit-content;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: calc(var(--navbar-height, 70px) + 16px);
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #333;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.header-icon {
+  font-size: 16px;
+}
+
+.categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.category-link {
+  padding: 10px 12px;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.category-link:hover {
+  background: #f9f9f9;
+  border-left-color: #ff9900;
+  color: #ff9900;
+  padding-left: 14px;
+}
+
+/* Main Content */
+.desktop-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.main-carousel-wrapper {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  height: 360px;
+}
+
+.main-content-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.deals-section-desktop {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.featured-cats-desktop {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Right Sidebar - Info Boxes */
+.desktop-right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: fit-content;
+  position: sticky;
+  top: calc(var(--navbar-height, 70px) + 16px);
+}
+
+.info-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.info-box:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.box-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.box-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.box-action {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.box-action-sub {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Info Box Variants */
+.whatsapp-box {
+  background: linear-gradient(135deg, #fff 0%, #f0fdf4 100%);
+  border-left: 4px solid #25d366;
+}
+
+.china-town-box {
+  background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);
+  border-left: 4px solid #ff9900;
+}
+
+.sell-box {
+  background: linear-gradient(135deg, #fff 0%, #dbeafe 100%);
+  border-left: 4px solid #3b82f6;
+}
+
+.call-box {
+  background: linear-gradient(135deg, #fff 0%, #fce7f3 100%);
+  border-left: 4px solid #ec4899;
+}
+
+/* Responsive - Hide on tablet and below */
+@media (max-width: 1200px) {
+  .desktop-layout {
+    grid-template-columns: 200px 1fr 240px;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .desktop-left-sidebar,
+  .desktop-right-sidebar {
+    display: none;
+  }
+
+  .desktop-main-content {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+  }
+
+  .desktop-left-sidebar,
+  .desktop-right-sidebar {
+    display: none !important;
+  }
+
+  .desktop-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .main-carousel-wrapper,
+  .main-content-section,
+  .deals-section-desktop,
+  .featured-cats-desktop {
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 12px;
+  }
+}
