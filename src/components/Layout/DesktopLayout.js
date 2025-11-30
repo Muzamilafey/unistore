@@ -30,7 +30,7 @@ const DesktopLayout = ({ mainContent, heroCarousel, deals, featuredCategories })
             </div>
             <div className="categories-list">
               {categories.map((cat) => (
-                <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} className="category-link">
+                <a key={cat} href={`/category/${encodeURIComponent(cat)}`} className="category-link">
                   {cat}
                 </a>
               ))}
