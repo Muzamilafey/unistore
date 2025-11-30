@@ -6,6 +6,8 @@
   padding: 16px;
   background: #f7f7f9;
   min-height: calc(100vh - var(--navbar-height, 70px));
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* Top Section: Carousel with Sidebars - Three Column */
