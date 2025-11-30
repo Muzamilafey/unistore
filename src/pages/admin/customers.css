@@ -328,19 +328,29 @@
 }
 
   /* Action buttons stack and full width */
+  /* Ensure action buttons are laid out in a row by default */
   .orders-table td > div {
-    flex-direction: column;
-    gap: 6px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   .orders-table td > div button {
-    width: 100%;
-    padding: 8px 0;
+    width: auto;
+    padding: 8px 18px;
   }
 
-
-
-.order-summary-card-whole {
-  display: flex; /* change from flex to block */
-  gap: 20px; /* optional spacing between cards */
-}
+  /* Small screens: stack action buttons vertically */
+  @media (max-width: 768px) {
+    .orders-table td > div {
+      flex-direction: column;
+      gap: 6px;
+      align-items: stretch;
+    }
+    .orders-table td > div button {
+      width: 100%;
+      padding: 8px 0;
+    }
+  }

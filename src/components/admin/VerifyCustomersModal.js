@@ -7,19 +7,19 @@ const VerifyCustomersModal = ({ isOpen, onClose, authToken, apiUrl }) => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  const baseUrl = apiUrl || process.env.REACT_APP_API_URL || window.location.origin;
+
   // Fetch unverified customers
   const fetchUnverifiedCustomers = async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(
-        `${apiUrl}/api/admin/unverified-customers`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+      const token = authToken || localStorage.getItem('token');
+      const response = await fetch(`${baseUrl}/api/admin/unverified-customers`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         setUnverifiedCustomers(data.users || []);
@@ -36,16 +36,14 @@ const VerifyCustomersModal = ({ isOpen, onClose, authToken, apiUrl }) => {
   // Verify a customer
   const verifyCustomer = async (userId) => {
     try {
-      const response = await fetch(
-        `${apiUrl}/api/admin/verify-customer/${userId}`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const token = authToken || localStorage.getItem('token');
+      const response = await fetch(`${baseUrl}/api/admin/verify-customer/${userId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+          'Content-Type': 'application/json',
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         setSuccessMsg(`✅ ${data.user.email} verified successfully!`);
