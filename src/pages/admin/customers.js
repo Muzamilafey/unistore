@@ -151,7 +151,7 @@ const AdminCustomers = () => {
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.email.toLowerCase().includes(search.toLowerCase());
     if (showUnverified) {
-      return matchesSearch && !c.isVerified;
+      return matchesSearch && !c.isEmailVerified;
     }
     return matchesSearch;
   });
@@ -244,6 +244,20 @@ const AdminCustomers = () => {
                 <div style={{ color: '#888', fontSize: '0.95rem' }}>Active in last 30 days</div>
               </div>
               <div className="order-summary-card">
+                <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>Verified Emails</div>
+                <div style={{ fontSize: '2rem', fontWeight: 700, margin: '8px 0', color: '#28a745' }}>
+                  {customers.filter(c => c.isEmailVerified).length}
+                </div>
+                <div style={{ color: '#888', fontSize: '0.95rem' }}>Email verified customers</div>
+              </div>
+              <div className="order-summary-card">
+                <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>Unverified</div>
+                <div style={{ fontSize: '2rem', fontWeight: 700, margin: '8px 0', color: '#dc3545' }}>
+                  {customers.filter(c => !c.isEmailVerified).length}
+                </div>
+                <div style={{ color: '#888', fontSize: '0.95rem' }}>Pending verification</div>
+              </div>
+              <div className="order-summary-card">
                 <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>Blocked</div>
                 <div style={{ fontSize: '2rem', fontWeight: 700, margin: '8px 0' }}>
                   {customers.filter(c => !c.isActive).length}
@@ -310,8 +324,8 @@ const AdminCustomers = () => {
                     </span>
                   </td>
                   <td>
-                    <span className={c.isVerified ? styles.statusActive : styles.statusInactive}>
-                      {c.isVerified ? 'Verified' : 'Unverified'}
+                    <span className={c.isEmailVerified ? styles.statusActive : styles.statusInactive}>
+                      {c.isEmailVerified ? '✅ Verified' : '⏳ Unverified'}
                     </span>
                   </td>
                   <td>
@@ -370,7 +384,7 @@ const AdminCustomers = () => {
                       >
                         Delete
                       </button>
-                      {!c.isVerified && (
+                      {!c.isEmailVerified && (
                         <button
                           className={styles.btnPrimary}
                           style={{
