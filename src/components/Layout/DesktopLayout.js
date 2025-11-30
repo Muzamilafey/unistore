@@ -25,7 +25,7 @@ const DesktopLayout = ({ mainContent, heroCarousel, deals, featuredCategories })
         <aside className="desktop-left-sidebar-top">
           <div className="sidebar-section">
             <div className="sidebar-header">
-              <span className="header-icon">📦</span>
+              <span className="header-icon"></span>
               <strong>Categories</strong>
             </div>
             <div className="categories-list">
