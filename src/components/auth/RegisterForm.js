@@ -101,9 +101,15 @@ const RegisterForm = () => {
       const { data } = await api.post('/users/register', form);
 
       if (data) {
-        setSuccess('Account registered successfully! Please check your email to verify your account.');
+        // Use backend's message so the UI reflects whether the verification
+        // email was actually sent (backend may return resendVerification flag).
+        setSuccess(data.message || 'Account registered successfully! Please check your email to verify your account.');
         setForm({ name: '', email: '', password: '', phone: '', address: '' });
-        setTimeout(() => navigate('/login'), 3000);
+
+        // If backend indicates email failed to send, do not auto-redirect.
+        if (!data.resendVerification) {
+          setTimeout(() => navigate('/login'), 3000);
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
