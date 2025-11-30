@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../../utils/api';
 import AdminNavbar from './AdminSidebar';
 import AppLockModal from '../../components/admin/AppLockModal';
+import VerifyCustomersModal from '../../components/admin/VerifyCustomersModal';
 import './AdminDashboard.css';
 import './customers.css';
 import styles from './dashboard.module.css';
@@ -19,6 +20,7 @@ const AdminCustomers = () => {
   const [showLockModal, setShowLockModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [lockStatus, setLockStatus] = useState(null);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
   useEffect(() => {
     checkAppLockStatus();
@@ -164,6 +166,13 @@ const AdminCustomers = () => {
         onClose={() => {}}
         onVerified={handleVerified}
       />
+      
+      <VerifyCustomersModal
+        isOpen={showVerifyModal}
+        onClose={() => setShowVerifyModal(false)}
+        authToken={localStorage.getItem('token')}
+        apiUrl={process.env.REACT_APP_API_URL || 'http://localhost:5000'}
+      />
 
       <AdminNavbar />
       <main
@@ -245,6 +254,17 @@ const AdminCustomers = () => {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <button 
+              className="admin-btn-secondary" 
+              onClick={() => setShowVerifyModal(true)}
+              style={{
+                background: 'linear-gradient(90deg, #28a745, #20c997)',
+                color: '#fff',
+              }}
+              title="Bulk manage customer verification"
+            >
+              🔍 Manage Verification
+            </button>
             <button className="admin-btn-secondary" onClick={handleDownloadExcel}>
               Download Excel
             </button>
