@@ -1,22 +1,27 @@
-/* Desktop Layout - Three Column */
+/* Desktop Layout - Carousel at top with sidebars */
 .desktop-layout {
-  display: grid;
-  grid-template-columns: 240px 1fr 280px;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   padding: 16px;
   background: #f7f7f9;
   min-height: calc(100vh - var(--navbar-height, 70px));
 }
 
-/* Left Sidebar */
-.desktop-left-sidebar {
+/* Top Section: Carousel with Sidebars - Three Column */
+.carousel-section {
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  gap: 16px;
+}
+
+/* Left Sidebar - Categories (Top) */
+.desktop-left-sidebar-top {
   background: #fff;
   border-radius: 8px;
   padding: 16px;
   height: fit-content;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: calc(var(--navbar-height, 70px) + 16px);
 }
 
 .sidebar-section {
@@ -44,6 +49,8 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  max-height: 320px;
+  overflow-y: auto;
 }
 
 .category-link {
@@ -62,13 +69,7 @@
   padding-left: 14px;
 }
 
-/* Main Content */
-.desktop-main-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
+/* Main Carousel Wrapper */
 .main-carousel-wrapper {
   background: #fff;
   border-radius: 8px;
@@ -77,35 +78,12 @@
   height: 360px;
 }
 
-.main-content-section {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.deals-section-desktop {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.featured-cats-desktop {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-/* Right Sidebar - Info Boxes */
-.desktop-right-sidebar {
+/* Right Sidebar - Info Boxes (Top) */
+.desktop-right-sidebar-top {
   display: flex;
   flex-direction: column;
   gap: 12px;
   height: fit-content;
-  position: sticky;
-  top: calc(var(--navbar-height, 70px) + 16px);
 }
 
 .info-box {
@@ -119,6 +97,8 @@
   gap: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 80px;
+  justify-content: center;
 }
 
 .info-box:hover {
@@ -127,12 +107,12 @@
 }
 
 .box-icon {
-  font-size: 32px;
+  font-size: 28px;
   line-height: 1;
 }
 
 .box-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #333;
   text-transform: uppercase;
@@ -140,13 +120,13 @@
 }
 
 .box-action {
-  font-size: 13px;
+  font-size: 12px;
   color: #666;
   font-weight: 500;
 }
 
 .box-action-sub {
-  font-size: 12px;
+  font-size: 11px;
   color: #999;
 }
 
@@ -171,25 +151,74 @@
   border-left: 4px solid #ec4899;
 }
 
-/* Responsive - Hide on tablet and below */
+/* Main Content Section - Below Carousel */
+.desktop-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.main-content-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.deals-section-desktop {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.featured-cats-desktop {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive */
 @media (max-width: 1200px) {
-  .desktop-layout {
-    grid-template-columns: 200px 1fr 240px;
+  .carousel-section {
+    grid-template-columns: 180px 1fr 220px;
     gap: 12px;
+  }
+
+  .categories-list {
+    max-height: 280px;
+  }
+
+  .main-carousel-wrapper {
+    height: 300px;
+  }
+
+  .info-box {
+    min-height: 70px;
     padding: 12px;
   }
 
-  .desktop-left-sidebar,
-  .desktop-right-sidebar {
-    display: none;
+  .box-icon {
+    font-size: 24px;
   }
 
-  .desktop-main-content {
-    grid-column: 1 / -1;
+  .box-label {
+    font-size: 10px;
+  }
+
+  .box-action {
+    font-size: 11px;
   }
 }
 
 @media (max-width: 768px) {
+  .carousel-section,
+  .desktop-left-sidebar-top,
+  .desktop-right-sidebar-top {
+    display: none !important;
+  }
+
   .desktop-layout {
     display: flex;
     flex-direction: column;
@@ -197,18 +226,12 @@
     padding: 0;
   }
 
-  .desktop-left-sidebar,
-  .desktop-right-sidebar {
-    display: none !important;
-  }
-
   .desktop-main-content {
     display: flex;
     flex-direction: column;
     gap: 0;
   }
 
-  .main-carousel-wrapper,
   .main-content-section,
   .deals-section-desktop,
   .featured-cats-desktop {
