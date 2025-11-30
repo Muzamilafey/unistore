@@ -326,7 +326,6 @@
     font-size: 0.75rem;
   }
 }
-  }
 
   /* Action buttons stack and full width */
   .orders-table td > div {
@@ -338,7 +337,7 @@
     width: 100%;
     padding: 8px 0;
   }
-}
+
 
 
 .order-summary-card-whole {
