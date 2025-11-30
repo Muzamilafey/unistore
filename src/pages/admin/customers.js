@@ -172,6 +172,7 @@ const AdminCustomers = () => {
         onClose={() => setShowVerifyModal(false)}
         authToken={localStorage.getItem('token')}
         apiUrl={process.env.REACT_APP_API_URL || 'http://localhost:5000'}
+        onVerified={handleVerified}
       />
 
       <AdminNavbar />

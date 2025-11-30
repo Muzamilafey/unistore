@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './VerifyCustomersModal.css';
 
-const VerifyCustomersModal = ({ isOpen, onClose, authToken, apiUrl }) => {
+const VerifyCustomersModal = ({ isOpen, onClose, authToken, apiUrl, onVerified }) => {
   const [unverifiedCustomers, setUnverifiedCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -51,6 +51,8 @@ const VerifyCustomersModal = ({ isOpen, onClose, authToken, apiUrl }) => {
         setUnverifiedCustomers(
           unverifiedCustomers.filter((u) => u._id !== userId)
         );
+        // Notify parent to refresh counts/lists
+        if (onVerified && typeof onVerified === 'function') onVerified();
         setTimeout(() => setSuccessMsg(''), 3000);
       } else {
         setError(data.message || 'Failed to verify customer');
