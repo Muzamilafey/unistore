@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { AuthContext } from '../../context/AuthContext';
+import GoogleSignIn from './GoogleSignIn';
 import './auth-form.css';
 
 const LoginForm = () => {
@@ -9,6 +10,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showActivate, setShowActivate] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,10 +33,10 @@ const LoginForm = () => {
     }
   };
 
-  const [showActivate, setShowActivate] = useState(false);
-
   return (
     <div className="auth-form-container">
+      <GoogleSignIn />
+      
       <form onSubmit={handleSubmit} noValidate className="auth-form">
         {error && <p className="error">{error}</p>}
         <input

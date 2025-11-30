@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import GoogleSignIn from './GoogleSignIn';
 import './auth-form.css';
 
 const bgSvg = (
@@ -100,9 +101,9 @@ const RegisterForm = () => {
       const { data } = await api.post('/users/register', form);
 
       if (data) {
-        setSuccess('Account registered successfully! Redirecting to login...');
+        setSuccess('Account registered successfully! Please check your email to verify your account.');
         setForm({ name: '', email: '', password: '', phone: '', address: '' });
-        setTimeout(() => navigate('/login'), 2000);
+        setTimeout(() => navigate('/login'), 3000);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
@@ -115,6 +116,8 @@ const RegisterForm = () => {
     <>
       {bgSvg}
       <div className="auth-form-container">
+        <GoogleSignIn />
+        
         <form onSubmit={handleSubmit} noValidate className="auth-form">
           {error && <p className="error">{error}</p>}
           {success && <p className="success">{success}</p>}
